@@ -1,34 +1,483 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="de">
 <head>
-    <title>DaBraStudios</title>
-    <link rel="icon" type="image/png" href="Shuttle copy.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>das!Burger - in a box | Burger Restaurant Wiesbaden</title>
+
+    <meta name="description" content="Frische Burger in der Box – das!Burger in Wiesbaden. Jetzt Speisekarte ansehen, bestellen oder reservieren.">
 
     <style>
 
-        h1 {
-            font-size: 40px;
-            transition: all 0.3s;
-            color: cyan;
+        :root {
+            --primary: #FF3B30;
+            --dark: #111827;
+            --accent: #FFD166;
+            --light: #F8FAFC;
+            --duration: .3s;
         }
 
-            h1:hover {
-                transform: scale(1.2);
-            }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Inter,Arial;
+        }
 
         body {
-            background-color: #222;
+            background: var(--light);
+            color: #111;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+            z-index: 999;
+            transition: all .3s;
+        }
+
+            header.small {
+                padding: 8px 16px;
+            }
+
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #111;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all .2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.03);
+        }
+
+        .hero {
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            font-family: Arial;
+            background: linear-gradient(45deg,#ff3b30,#ff7a30);
+            color: white;
+            animation: fadeIn 1s ease forwards;
+        }
+
+            .hero h1 {
+                font-size: 42px;
+                margin-bottom: 20px;
+            }
+
+        .quick {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background: white;
+            flex-wrap: wrap;
+        }
+
+            .quick div {
+                background: #fff;
+                padding: 14px;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,.08);
+                cursor: pointer;
+                transition: transform .2s;
+            }
+
+                .quick div:hover {
+                    transform: translateY(-5px);
+                }
+
+        .section {
+            padding: 60px 20px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,.1);
+            overflow: hidden;
+            transition: all .3s;
+        }
+
+            .card:hover {
+                transform: translateY(-6px) scale(1.02);
+            }
+
+            .card img {
+                width: 100%;
+                height: 160px;
+                object-fit: cover;
+            }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .price {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .menu-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+            .menu-filter button {
+                background: #eee;
+            }
+
+        .cart {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+        }
+
+        .cart-count {
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            margin-left: 6px;
+        }
+
+        footer {
+            background: #111;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--primary);
+            padding: 12px;
+            text-align: center;
+        }
+
+            .bottom-bar button {
+                background: white;
+                color: #111;
+            }
+
+        form {
+            display: grid;
+            gap: 12px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        input, textarea {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .fly {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            z-index: 9999;
+            animation: fly 0.8s ease forwards;
+        }
+
+        @keyframes fly {
+            0% {
+                transform: translate(0,0) scale(1)
+            }
+
+            100% {
+                transform: translate(500px,-300px) scale(.1);
+                opacity: 0
+            }
         }
     </style>
+
+    <script type="application/ld+json">
+        {
+         "@context":"https://schema.org",
+         "@type":"Restaurant",
+         "name":"das!Burger - in a box",
+         "telephone":"+49 611 20551616",
+         "address":{
+           "@type":"PostalAddress",
+           "streetAddress":"Louis-Buchelt-Straße 1",
+           "addressLocality":"Wiesbaden",
+           "postalCode":"65193",
+           "addressCountry":"DE"
+         },
+         "priceRange":"10-20 €",
+         "servesCuisine":"Burgers",
+         "aggregateRating":{
+           "@type":"AggregateRating",
+           "ratingValue":"4.1",
+           "reviewCount":"122"
+         }
+        }
+    </script>
 
 </head>
 
 <body>
 
-    <h1>MioXXD</h1>
-    <p>Damian Braun</p>
+    <header id="header">
+        <div><strong>das!Burger</strong></div>
+
+        <nav>
+            <a href="#menu">Speisekarte</a>
+            <a href="#bestellen">Bestellen</a>
+            <a href="#kontakt">Reservierung</a>
+        </nav>
+
+        <button class="btn btn-primary">Jetzt bestellen</button>
+    </header>
+
+    <div class="cart">
+        🛒 Warenkorb <span class="cart-count" id="cart">0</span>
+    </div>
+
+    <section class="hero">
+
+        <h1>Frische Burger in der Box</h1>
+        <p>Schnell. Lokal. Richtig lecker.</p>
+
+        <br>
+
+        <button class="btn btn-primary">Speisekarte ansehen</button>
+
+    </section>
+
+    <section class="quick">
+
+        <div>📍 Route</div>
+        <div>📞 Anrufen</div>
+        <div>⏰ Heute geschlossen</div>
+        <div>⭐ 4.1 Bewertung</div>
+        <div>🔗 Teilen</div>
+
+    </section>
+
+    <section class="section">
+
+        <h2>Warum das!Burger?</h2>
+
+        <br>
+
+        <div class="cards">
+
+            <div class="card">
+                <div class="card-body">
+                    <h3>Bio Rind</h3>
+                    <p>Frisches Fleisch aus der Region.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h3>Vegetarische Optionen</h3>
+                    <p>Leckere Veggie Burger.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h3>Hausgemachte Saucen</h3>
+                    <p>Unser Geheimrezept.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="section" id="menu">
+
+        <h2>Top Gerichte</h2>
+
+        <br>
+
+        <div class="menu-filter">
+            <button onclick="filter('all')">Alle</button>
+            <button onclick="filter('burger')">Burger</button>
+            <button onclick="filter('veg')">Vegetarisch</button>
+        </div>
+
+        <div class="cards" id="menu-items">
+
+            <div class="card burger">
+                <img src="https://picsum.photos/300/200">
+                <div class="card-body">
+                    <h3>Classic Burger</h3>
+                    <p>Rind, Salat, Tomate</p>
+                    <p class="price">12 €</p>
+                    <button class="btn btn-primary" onclick="addCart(event)">+</button>
+                </div>
+            </div>
+
+            <div class="card burger">
+                <img src="https://picsum.photos/301/200">
+                <div class="card-body">
+                    <h3>Cheese Burger</h3>
+                    <p>Rind, Cheddar</p>
+                    <p class="price">13 €</p>
+                    <button class="btn btn-primary" onclick="addCart(event)">+</button>
+                </div>
+            </div>
+
+            <div class="card veg">
+                <img src="https://picsum.photos/302/200">
+                <div class="card-body">
+                    <h3>Veggie Burger</h3>
+                    <p>Veggie Patty</p>
+                    <p class="price">11 €</p>
+                    <button class="btn btn-primary" onclick="addCart(event)">+</button>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="section" id="kontakt">
+
+        <h2>Tisch reservieren</h2>
+
+        <br>
+
+        <form onsubmit="event.preventDefault();alert('Reservierung bestätigt!')">
+
+            <input placeholder="Name">
+
+            <input placeholder="Telefon">
+
+            <input type="date">
+
+            <input type="time">
+
+            <input placeholder="Personen">
+
+<textarea placeholder="Nachricht"></textarea>
+
+            <button class="btn btn-primary">Reservieren</button>
+
+        </form>
+
+    </section>
+
+    <footer>
+
+        <p>das!Burger - in a box</p>
+
+        <p>Louis-Buchelt-Straße 1, Wiesbaden</p>
+
+        <p>📞 0611 20551616</p>
+
+        <p>⭐ 4.1 / 5 (122 Bewertungen)</p>
+
+        <br>
+
+        <a href="#">Impressum</a> |
+        <a href="#">Datenschutz</a>
+
+    </footer>
+
+    <div class="bottom-bar">
+        <button class="btn">Jetzt bestellen</button>
+    </div>
+
+    <script>
+
+let cart=0
+
+function addCart(e){
+
+cart++
+
+document.getElementById("cart").innerText=cart
+
+let fly=document.createElement("div")
+fly.className="fly"
+
+document.body.appendChild(fly)
+
+setTimeout(()=>fly.remove(),800)
+
+}
+
+function filter(cat){
+
+let items=document.querySelectorAll("#menu-items .card")
+
+items.forEach(el=>{
+if(cat=="all") el.style.display="block"
+else if(el.classList.contains(cat)) el.style.display="block"
+else el.style.display="none"
+})
+
+}
+
+window.addEventListener("scroll",()=>{
+let h=document.getElementById("header")
+if(window.scrollY>100) h.classList.add("small")
+else h.classList.remove("small")
+})
+
+    </script>
 
 </body>
 </html>
