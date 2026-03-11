@@ -1,35 +1,386 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="de">
 <head>
-    <title>DaBraStudios</title>
-    <link rel="icon" type="image/png" href="Shuttle copy.png">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEINE_FIRMA - Professionelle Webseiten für moderne Unternehmen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-
-        h1 {
-            font-size: 40px;
-            transition: all 0.3s;
-            color: cyan;
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
-            h1:hover {
-                transform: scale(1.2);
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(18, 18, 18, 0.8);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+            nav a {
+                color: #00BFFF;
+                text-decoration: none;
+                transition: color 0.3s;
             }
 
-        body {
-            background-color: #222;
+                nav a:hover {
+                    color: #00FFFF;
+                }
+
+        .hero {
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            font-family: Arial;
+            padding: 0 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .hero h1 {
+                font-size: 3rem;
+                margin: 0;
+            }
+
+            .hero p {
+                font-size: 1.5rem;
+            }
+
+        .scroll-indicator {
+            margin-top: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .btn {
+            background: #00BFFF;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+            outline: none;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+            .btn:hover {
+                background: #00FFFF;
+                transform: scale(1.05);
+            }
+
+        section {
+            padding: 80px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about, .services, .team {
+            background: #1E1E1E;
+            margin: 20px 0;
+            padding: 40px;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .service-card, .team-member {
+            background: #2A2A2A;
+            border-radius: 10px;
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+            .service-card:hover, .team-member:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 20px rgba(0, 191, 255, 0.5);
+            }
+
+            .team-member img {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                object-fit: cover;
+                transition: transform 0.3s, box-shadow 0.3s;
+                box-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+            }
+
+            .team-member:hover img {
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(0, 191, 255, 1);
+            }
+
+        footer {
+            background: #1E1E1E;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input, textarea {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input {
+            background: #2A2A2A;
+            color: white;
+        }
+
+        textarea {
+            background: #2A2A2A;
+            color: white;
+            resize: vertical;
+        }
+        /* Hintergrundanimation */
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(0, 191, 255, 0.7);
+            border-radius: 50%;
+            will-change: transform;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 10px;
+            }
         }
     </style>
-
 </head>
-
 <body>
+    <header>
+        <h1>MEINE_FIRMA</h1>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">Über uns</a>
+            <a href="#services">Leistungen</a>
+            <a href="#team">Team</a>
+            <a href="#contact">Kontakt</a>
+        </nav>
+    </header>
 
-    <h1>MioXXD</h1>
-    <p>Damian Braun</p>
-    <button><a href="index2.html">hier klicken</a> </button>
+    <div class="hero" id="home">
+        <div class="background-animation"></div>
+        <h1>Professionelle Websites für moderne Unternehmen</h1>
+        <p>MEINE_FIRMA erstellt moderne, schnelle und professionelle Webseiten für Unternehmen.</p>
+        <button class="btn">Unsere Leistungen</button>
+        <button class="btn">Kontakt aufnehmen</button>
+        <div class="scroll-indicator">↓ Hier geht es weiter ↓</div>
+    </div>
 
+    <section class="about" id="about">
+        <h2>Über uns</h2>
+        <p>Wir von MEINE_FIRMA entwickeln moderne Websites, helfen Firmen, online sichtbar zu werden und kombinieren Design, Entwicklung und Performance.</p>
+    </section>
+
+    <section class="services" id="services">
+        <h2>Leistungen</h2>
+        <div class="services-container" style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+            <div class="service-card">
+                <h3>Webdesign</h3>
+            </div>
+            <div class="service-card">
+                <h3>Website Entwicklung</h3>
+            </div>
+            <div class="service-card">
+                <h3>Responsive Design</h3>
+            </div>
+            <div class="service-card">
+                <h3>Performance Optimierung</h3>
+            </div>
+            <div class="service-card">
+                <h3>SEO Grundlagen</h3>
+            </div>
+            <div class="service-card">
+                <h3>Wartung & Support</h3>
+            </div>
+        </div>
+    </section>
+
+    <section class="team" id="team">
+        <h2>Unser Team</h2>
+        <div class="team-container" style="display: flex; justify-content: space-around;">
+            <div class="team-member">
+                <img src="BenetTelinski.jpeg" alt="Bennet Bo Peter Telinski">
+                <h3>Bennet Bo Peter Telinski</h3>
+                <p>CEO & Co-CEO</p>
+            </div>
+            <div class="team-member">
+                <img src="AdrianPötzinger.jpeg" alt="Adrian Pötzinger">
+                <h3>Adrian Pötzinger</h3>
+                <p>CEO & Co-CEO</p>
+            </div>
+            <div class="team-member">
+                <img src="DamianBraun.jpeg" alt="Damian Braun">
+                <h3>Damian Braun</h3>
+                <p>Programmierer</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Kontakt</h2>
+        <form>
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+            <textarea rows="4" placeholder="Nachricht" required></textarea>
+            <button class="btn">Absenden</button>
+        </form>
+    </section>
+
+    <footer>
+        <h3>MEINE_FIRMA</h3>
+        <p>Wir bieten professionelle Weblösungen für Ihr Unternehmen.</p>
+        <p>&copy; 2023 MEINE_FIRMA. Alle Rechte vorbehalten.</p>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">Über uns</a>
+            <a href="#services">Leistungen</a>
+            <a href="#team">Team</a>
+            <a href="#contact">Kontakt</a>
+        </nav>
+    </footer>
+
+    <script>
+        // Scroll Animation für die Navigation
+        document.addEventListener('scroll', function () {
+            const scrollPos = window.scrollY;
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => {
+                if (section.offsetTop <= scrollPos && (section.offsetTop + section.offsetHeight) > scrollPos) {
+                    const currentId = section.getAttribute('id');
+                    document.querySelectorAll('header nav a').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${currentId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+
+        // Hintergrundanimation mit Partikeln
+        const particles = [];
+        const particleCount = 100;
+        const container = document.querySelector('.background-animation');
+
+        // Partikel erstellen
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 5 + 2;
+
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.opacity = Math.random();
+            container.appendChild(particle);
+            particles.push({
+                element: particle,
+                direction: Math.random() * 360,
+                speed: Math.random() * 0.5 + 0.1,
+                size: size
+            });
+        }
+
+        // Partikelbewegung
+        function animateParticles() {
+            particles.forEach(particle => {
+                const { element, direction, speed } = particle;
+                const x = Math.cos(direction * (Math.PI / 180)) * speed;
+                const y = Math.sin(direction * (Math.PI / 180)) * speed;
+
+                particle.element.style.left = parseFloat(particle.element.style.left) + x + 'px';
+                particle.element.style.top = parseFloat(particle.element.style.top) + y + 'px';
+
+                // Kollisionen mit den Rändern
+                if (parseFloat(particle.element.style.left) > window.innerWidth) {
+                    particle.element.style.left = 0;
+                } else if (parseFloat(particle.element.style.left) < 0) {
+                    particle.element.style.left = window.innerWidth + 'px';
+                }
+                if (parseFloat(particle.element.style.top) > window.innerHeight) {
+                    particle.element.style.top = 0;
+                } else if (parseFloat(particle.element.style.top) < 0) {
+                    particle.element.style.top = window.innerHeight + 'px';
+                }
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        // Mausbewegungsinteraktion
+        document.addEventListener('mousemove', (e) => {
+            particles.forEach((particle) => {
+                const xPos = parseFloat(particle.element.style.left);
+                const yPos = parseFloat(particle.element.style.top);
+                const deltaX = (e.clientX / window.innerWidth) * 100 - (xPos / window.innerWidth) * 100;
+                const deltaY = (e.clientY / window.innerHeight) * 100 - (yPos / window.innerHeight) * 100;
+
+                particle.element.style.transform = `translate(${deltaX / 10}px, ${deltaY / 10}px)`;
+            });
+        });
+
+        animateParticles();
+    </script>
 </body>
 </html>
