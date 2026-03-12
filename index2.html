@@ -180,14 +180,6 @@
 </head>
 <body>
 
-    <!-- Init Loader -->
-    <div id="loader">
-        <h2 class="text-2xl font-light tracking-widest text-[rgba(255,255,255,0.7)] animate-pulse">GENERATING SEQUENCE</h2>
-        <div class="h-1 w-48 bg-gray-800 mt-6 rounded overflow-hidden">
-            <div id="loader-bar" class="h-full bg-primary w-0 transition-all duration-100"></div>
-        </div>
-    </div>
-
     <!-- Minimal Sticky Navbar -->
     <nav class="fixed top-0 w-full z-50 transition-all duration-300 interactive px-8 py-6 flex justify-between items-center" id="navbar">
         <div class="text-xl font-bold tracking-tight">Flow State</div>
@@ -397,24 +389,28 @@
                 const img = new Image();
                 img.src = offscreen.toDataURL('image/webp', 0.8);
 
-                // Wait for image to be somewhat parsed (though data url is sync, making it a promise helps UI updates)
+                // Wait for image to be somewhat parsed
                 await new Promise(r => { img.onload = r; });
                 frames.push(img);
 
-                // Update Loader
-                loaderBar.style.width = `${((i + 1) / FRAME_COUNT) * 100}%`;
+                // Wir zeichnen sofort den ersten Frame in den Canvas, sobald er generiert ist,
+                // damit der User nicht auf ein schwarzes Bild guckt.
+                if (i === 0 && window.__renderFrameFunc) {
+                    window.__renderFrameFunc(0);
+                }
 
                 // Yield to main thread briefly so UI doesn't freeze entirely
                 if (i % 5 === 0) {
                     await new Promise(r => setTimeout(r, 0));
                 }
             }
-
-            initScrollyTelling();
         }
 
-        // Starte den Frame-Ladevorgang nach DOMContentLoaded
+        // Starte den Frame-Ladevorgang nach DOMContentLoaded, aber wir blockieren die Seite nicht
         if (typeof window !== "undefined") {
+            // GSAP sofort initialisieren
+            initScrollyTelling();
+            // Generation asynchron starten
             generateSequence();
         }
 
@@ -422,11 +418,6 @@
         let playhead;
 
         function initScrollyTelling() {
-            // Hide Loader
-            const loader = document.getElementById('loader');
-            loader.style.opacity = '0';
-            setTimeout(() => { loader.style.display = 'none'; }, 800);
-
             // 1. Initial Frame on Canvas (Render First Frame)
             const renderFrame = (index) => {
                 const img = frames[index];
