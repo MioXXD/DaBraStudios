@@ -371,19 +371,7 @@
                 oCtx.fill();
                 oCtx.strokeStyle = "#ffffff";
                 oCtx.lineWidth = 1;
-                oCtx.stroke();
-
                 oCtx.restore();
-
-                // Partikel Simulation im Hintergrund (Sterne/Punkte)
-                oCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
-                for (let p = 0; p < 50; p++) {
-                    const px = (Math.sin(p * 100 + progress * 10) * renderWidth / 2) + renderWidth / 2;
-                    const py = (Math.cos(p * 50 - progress * 5) * renderHeight / 2) + renderHeight / 2;
-                    oCtx.beginPath();
-                    oCtx.arc(px, py, 1.5, 0, Math.PI * 2);
-                    oCtx.fill();
-                }
 
                 // Save frame as Image data to memory
                 const img = new Image();
@@ -393,13 +381,7 @@
                 await new Promise(r => { img.onload = r; });
                 frames.push(img);
 
-                // Wir zeichnen sofort den ersten Frame in den Canvas, sobald er generiert ist,
-                // damit der User nicht auf ein schwarzes Bild guckt.
-                if (i === 0 && window.__renderFrameFunc) {
-                    window.__renderFrameFunc(0);
-                }
-
-                // Yield to main thread briefly so UI doesn't freeze entirely
+                // Yield to main thread briefly so UI doesn't freeze
                 if (i % 5 === 0) {
                     await new Promise(r => setTimeout(r, 0));
                 }
@@ -414,17 +396,35 @@
             generateSequence();
         }
 
+        // Dynamischer Hintergrund: Partikel fliegen immer (unabhängig vom Scroll)
+        // Globaler Zeit-Taktgeber für fortlaufende Animation
+        let timeGlobal = 0;
+
+        function renderParticles(ctx, width, height) {
+            ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+            timeGlobal += 0.01; // Geschwindigkeit der Partikel
+            for (let p = 0; p < 50; p++) {
+                // timeGlobal anstelle von festem Frame-Progress nutzen
+                const px = (Math.sin(p * 100 + timeGlobal) * width / 2) + width / 2;
+                const py = (Math.cos(p * 50 - timeGlobal * 0.5) * height / 2) + height / 2;
+                ctx.beginPath();
+                ctx.arc(px, py, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
         // --------- GSAP STORY ANIMATIONS & CANVAS RENDER LOOP ---------
         let playhead;
 
         function initScrollyTelling() {
-            // 1. Initial Frame on Canvas (Render First Frame)
-            const renderFrame = (index) => {
-                const img = frames[index];
-                if (img && img.width > 0) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Kontinuierlicher Render-Loop statt nur bei GSAP Update
+            const renderLoop = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                    // Berechne "object-fit: cover" Logik für das Canvas DrawImage
+                // 1. Optionales Scroll-Bild zeichnen (wenn GSAP/Playhead definiert)
+                if (playhead && frames[Math.round(playhead.frame)]) {
+                    const img = frames[Math.round(playhead.frame)];
+
                     const canvasRatio = canvas.width / canvas.height;
                     const imgRatio = img.width / img.height;
 
@@ -434,12 +434,10 @@
                     let offsetY = 0;
 
                     if (canvasRatio > imgRatio) {
-                        // Canvas ist breiter -> Skaliere auf Breite
                         drawWidth = canvas.width;
                         drawHeight = canvas.width / imgRatio;
                         offsetY = (canvas.height - drawHeight) / 2;
                     } else {
-                        // Canvas ist schmaler -> Skaliere auf Höhe
                         drawHeight = canvas.height;
                         drawWidth = canvas.height * imgRatio;
                         offsetX = (canvas.width - drawWidth) / 2;
@@ -447,9 +445,16 @@
 
                     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
                 }
+
+                // 2. Partikel immer oben drüber (oder drunter) zeichnen
+                renderParticles(ctx, canvas.width, canvas.height);
+
+                requestAnimationFrame(renderLoop);
             };
-            window.__renderFrameFunc = renderFrame;
-            renderFrame(0);
+
+            // Render Loop Endlos-Starten
+            window.__renderFrameFunc = () => { }; // GSAP Update braucht jetzt nichts mehr aktiv tun
+            requestAnimationFrame(renderLoop);
 
             // 2. State object for GSAP to animate (0 to FRAME_COUNT-1)
             playhead = { frame: 0 };
