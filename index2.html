@@ -1,483 +1,568 @@
 ﻿<!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow State | Premium Scrollytelling Experience</title>
+    <meta name="description" content="Wir bei Flow State konzipieren und entwickeln souveräne, performante Premium-Webseiten, die deine Marke weltweit repräsentieren. Apple-Level Design trifft auf perfektes Engineering.">
+    <meta name="theme-color" content="#050505">
 
-    <title>das!Burger - in a box | Burger Restaurant Wiesbaden</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <meta name="description" content="Frische Burger in der Box – das!Burger in Wiesbaden. Jetzt Speisekarte ansehen, bestellen oder reservieren.">
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "#050505",
+                        surface: "#0A0A0C",
+                        primary: "#0050FF",
+                        secondary: "#00D6FF",
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    },
+                    letterSpacing: {
+                        tightest: '-0.04em',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- GSAP & Lenis for Scrollytelling & Smooth Scroll -->
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <style>
-
-        :root {
-            --primary: #FF3B30;
-            --dark: #111827;
-            --accent: #FFD166;
-            --light: #F8FAFC;
-            --duration: .3s;
-        }
-
-        * {
-            box-sizing: border-box;
+        body, html {
             margin: 0;
             padding: 0;
-            font-family: Inter,Arial;
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: auto !important; /* Managed by Lenis */
         }
 
-        body {
-            background: var(--light);
-            color: #111;
+        /* Hide Scrollbar */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
         }
 
-        header {
+        /* Scrollytelling Container */
+        .story-container {
+            position: relative;
+            height: 400vh; /* Scroll-Länge */
+            width: 100%;
+        }
+
+        /* Fixed Canvas & Glow */
+        .sticky-viewport {
             position: sticky;
             top: 0;
-            background: white;
-            padding: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,.1);
-            z-index: 999;
-            transition: all .3s;
-        }
-
-            header.small {
-                padding: 8px 16px;
-            }
-
-        nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #111;
-            font-weight: 600;
-        }
-
-        .btn {
-            padding: 10px 18px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all .2s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: scale(1.03);
-        }
-
-        .hero {
-            height: 70vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(45deg,#ff3b30,#ff7a30);
-            color: white;
-            animation: fadeIn 1s ease forwards;
-        }
-
-            .hero h1 {
-                font-size: 42px;
-                margin-bottom: 20px;
-            }
-
-        .quick {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-            background: white;
-            flex-wrap: wrap;
-        }
-
-            .quick div {
-                background: #fff;
-                padding: 14px;
-                border-radius: 10px;
-                box-shadow: 0 2px 8px rgba(0,0,0,.08);
-                cursor: pointer;
-                transition: transform .2s;
-            }
-
-                .quick div:hover {
-                    transform: translateY(-5px);
-                }
-
-        .section {
-            padding: 60px 20px;
-            max-width: 1100px;
-            margin: auto;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,.1);
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
-            transition: all .3s;
-        }
-
-            .card:hover {
-                transform: translateY(-6px) scale(1.02);
-            }
-
-            .card img {
-                width: 100%;
-                height: 160px;
-                object-fit: cover;
-            }
-
-        .card-body {
-            padding: 15px;
-        }
-
-        .price {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .menu-filter {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
         }
 
-            .menu-filter button {
-                background: #eee;
-            }
-
-        .cart {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            padding: 10px 14px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,.2);
-        }
-
-        .cart-count {
-            background: var(--primary);
-            color: white;
-            border-radius: 50%;
-            padding: 4px 8px;
-            margin-left: 6px;
-        }
-
-        footer {
-            background: #111;
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
+        canvas {
+            position: absolute;
+            top: 0;
             left: 0;
             width: 100%;
-            background: var(--primary);
-            padding: 12px;
-            text-align: center;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
         }
 
-            .bottom-bar button {
-                background: white;
-                color: #111;
-            }
-
-        form {
-            display: grid;
-            gap: 12px;
-            max-width: 500px;
-            margin: auto;
+        .glow-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background: radial-gradient(circle at center, rgba(0, 80, 255, 0.15), transparent 60%);
+            z-index: 0;
+            pointer-events: none;
         }
 
-        input, textarea {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+        /* Content Overlays */
+        .content-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        @keyframes fadeIn {
-            from {
+        .interactive {
+            pointer-events: auto;
+        }
+
+        /* The Animated Gradient Button */
+        .btn-gradient {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+            .btn-gradient::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: conic-gradient(from 0deg, transparent, #0050FF, #00D6FF, transparent 30%);
+                animation: rotate-border 4s linear infinite;
+                z-index: -1;
                 opacity: 0;
-                transform: translateY(20px)
+                transition: opacity 0.3s ease;
             }
 
-            to {
+            .btn-gradient:hover::before {
                 opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        .fly {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
-            z-index: 9999;
-            animation: fly 0.8s ease forwards;
-        }
-
-        @keyframes fly {
-            0% {
-                transform: translate(0,0) scale(1)
             }
 
+            .btn-gradient:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px -10px rgba(0, 80, 255, 0.5);
+            }
+
+        @keyframes rotate-border {
             100% {
-                transform: translate(500px,-300px) scale(.1);
-                opacity: 0
+                transform: rotate(360deg);
             }
+        }
+
+        /* Sections Positioning */
+        .panel {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 10vw;
+            opacity: 0; /* Managed by GSAP */
+            will-change: opacity, transform;
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #050505;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease;
         }
     </style>
-
-    <script type="application/ld+json">
-        {
-         "@context":"https://schema.org",
-         "@type":"Restaurant",
-         "name":"das!Burger - in a box",
-         "telephone":"+49 611 20551616",
-         "address":{
-           "@type":"PostalAddress",
-           "streetAddress":"Louis-Buchelt-Straße 1",
-           "addressLocality":"Wiesbaden",
-           "postalCode":"65193",
-           "addressCountry":"DE"
-         },
-         "priceRange":"10-20 €",
-         "servesCuisine":"Burgers",
-         "aggregateRating":{
-           "@type":"AggregateRating",
-           "ratingValue":"4.1",
-           "reviewCount":"122"
-         }
-        }
-    </script>
-
 </head>
-
 <body>
 
-    <header id="header">
-        <div><strong>das!Burger</strong></div>
-
-        <nav>
-            <a href="#menu">Speisekarte</a>
-            <a href="#bestellen">Bestellen</a>
-            <a href="#kontakt">Reservierung</a>
-        </nav>
-
-        <button class="btn btn-primary">Jetzt bestellen</button>
-    </header>
-
-    <div class="cart">
-        🛒 Warenkorb <span class="cart-count" id="cart">0</span>
+    <!-- Init Loader -->
+    <div id="loader">
+        <h2 class="text-2xl font-light tracking-widest text-[rgba(255,255,255,0.7)] animate-pulse">GENERATING SEQUENCE</h2>
+        <div class="h-1 w-48 bg-gray-800 mt-6 rounded overflow-hidden">
+            <div id="loader-bar" class="h-full bg-primary w-0 transition-all duration-100"></div>
+        </div>
     </div>
 
-    <section class="hero">
+    <!-- Minimal Sticky Navbar -->
+    <nav class="fixed top-0 w-full z-50 transition-all duration-300 interactive px-8 py-6 flex justify-between items-center" id="navbar">
+        <div class="text-xl font-bold tracking-tight">Flow State</div>
+        <div class="hidden md:flex gap-8 text-sm font-medium text-[rgba(255,255,255,0.6)]">
+            <a href="#" class="hover:text-white transition">Leistungen</a>
+            <a href="#" class="hover:text-white transition">Unser Team</a>
+            <a href="#" class="hover:text-white transition">Über uns</a>
+        </div>
+        <button class="btn-gradient px-6 py-2 rounded-full text-sm font-semibold tracking-wide">Kontakt anfragen</button>
+    </nav>
 
-        <h1>Frische Burger in der Box</h1>
-        <p>Schnell. Lokal. Richtig lecker.</p>
+    <!-- Scrollytelling Kernbereich (400vh) -->
+    <div class="story-container">
 
-        <br>
-
-        <button class="btn btn-primary">Speisekarte ansehen</button>
-
-    </section>
-
-    <section class="quick">
-
-        <div>📍 Route</div>
-        <div>📞 Anrufen</div>
-        <div>⏰ Heute geschlossen</div>
-        <div>⭐ 4.1 Bewertung</div>
-        <div>🔗 Teilen</div>
-
-    </section>
-
-    <section class="section">
-
-        <h2>Warum das!Burger?</h2>
-
-        <br>
-
-        <div class="cards">
-
-            <div class="card">
-                <div class="card-body">
-                    <h3>Bio Rind</h3>
-                    <p>Frisches Fleisch aus der Region.</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <h3>Vegetarische Optionen</h3>
-                    <p>Leckere Veggie Burger.</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <h3>Hausgemachte Saucen</h3>
-                    <p>Unser Geheimrezept.</p>
-                </div>
-            </div>
-
+        <!-- Sticky Visueller Bereich (Canvas) -->
+        <div class="sticky-viewport">
+            <div class="glow-overlay"></div>
+            <!-- Canvas für Bildsequenz -->
+            <canvas id="sequence-canvas"></canvas>
         </div>
 
-    </section>
+        <!-- Scroll Content Layer -->
+        <div class="content-layer">
+            <!-- 0–15%: Hero -->
+            <div class="panel justify-center text-center" id="panel-1" style="top: 5vh;">
+                <div class="max-w-4xl">
+                    <h1 class="text-6xl md:text-8xl font-bold tracking-tightest mb-6">Deine Website.<br>Dein Image.</h1>
+                    <p class="text-xl md:text-2xl text-[rgba(255,255,255,0.6)] font-light max-w-2xl mx-auto">
+                        Wir designen und bauen digitale Erlebnisse, die deine Marke souverän repräsentieren.
+                    </p>
+                </div>
+            </div>
 
-    <section class="section" id="menu">
+            <!-- 15–40%: Engineering Reveal -->
+            <div class="panel justify-start" id="panel-2" style="top: 120vh;">
+                <div class="max-w-xl">
+                    <h2 class="text-4xl md:text-5xl font-semibold tracking-tight mb-4">Engineering Reveal.</h2>
+                    <p class="text-lg text-[rgba(255,255,255,0.6)] leading-relaxed">
+                        Pixelperfektion trifft auf kompromisslose Performance. Jede Linie Code ist orchestriert für maximale Wirkung. Die innere Struktur deiner Marke wird sichtbar.
+                    </p>
+                </div>
+            </div>
 
-        <h2>Top Gerichte</h2>
+            <!-- 40–70%: Product to Platform -->
+            <div class="panel justify-end text-right" id="panel-3" style="top: 220vh;">
+                <div class="max-w-xl">
+                    <h2 class="text-4xl md:text-5xl font-semibold tracking-tight mb-4 text-secondary">Skalierbare Plattform.</h2>
+                    <p class="text-lg text-[rgba(255,255,255,0.6)] leading-relaxed">
+                        Design, SEO, Speed. Eine nahtlose Architektur, bereit, den Markt zu dominieren und Vertrauen aufzubauen.
+                    </p>
+                </div>
+            </div>
 
-        <br>
-
-        <div class="menu-filter">
-            <button onclick="filter('all')">Alle</button>
-            <button onclick="filter('burger')">Burger</button>
-            <button onclick="filter('veg')">Vegetarisch</button>
+            <!-- 70–100%: CTA -->
+            <div class="panel justify-center text-center interactive" id="panel-4" style="top: 320vh;">
+                <div class="max-w-2xl bg-[#0A0A0C] border border-[rgba(255,255,255,0.05)] p-12 rounded-3xl backdrop-blur-md shadow-2xl">
+                    <h2 class="text-5xl font-bold tracking-tight mb-6">Bereit für den Flow State?</h2>
+                    <p class="text-lg text-[rgba(255,255,255,0.6)] mb-10">Lass uns gemeinsam deine Vision und digitale Identität auf das Apple-Level heben.</p>
+                    <button class="btn-gradient px-10 py-5 rounded-full text-lg font-bold tracking-wide text-white w-full shadow-[0_0_20px_rgba(0,80,255,0.3)]">
+                        Projekt jetzt anfragen
+                    </button>
+                    <p class="text-xs text-[rgba(255,255,255,0.3)] mt-6">Absolut vertraulich. Erstgespräch kostenlos.</p>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="cards" id="menu-items">
-
-            <div class="card burger">
-                <img src="https://picsum.photos/300/200">
-                <div class="card-body">
-                    <h3>Classic Burger</h3>
-                    <p>Rind, Salat, Tomate</p>
-                    <p class="price">12 €</p>
-                    <button class="btn btn-primary" onclick="addCart(event)">+</button>
-                </div>
-            </div>
-
-            <div class="card burger">
-                <img src="https://picsum.photos/301/200">
-                <div class="card-body">
-                    <h3>Cheese Burger</h3>
-                    <p>Rind, Cheddar</p>
-                    <p class="price">13 €</p>
-                    <button class="btn btn-primary" onclick="addCart(event)">+</button>
-                </div>
-            </div>
-
-            <div class="card veg">
-                <img src="https://picsum.photos/302/200">
-                <div class="card-body">
-                    <h3>Veggie Burger</h3>
-                    <p>Veggie Patty</p>
-                    <p class="price">11 €</p>
-                    <button class="btn btn-primary" onclick="addCart(event)">+</button>
-                </div>
-            </div>
-
+    <!-- Nachlaufender Footer -->
+    <footer class="h-screen bg-[#020202] flex items-center justify-center border-t border-[rgba(255,255,255,0.05)] relative z-20">
+        <div class="text-center">
+            <div class="text-3xl font-bold mb-4 opacity-50">Flow State &copy; 2026</div>
+            <p class="text-[rgba(255,255,255,0.3)] text-sm">Made with Precision. Scrollytelling Demo.</p>
         </div>
-
-    </section>
-
-    <section class="section" id="kontakt">
-
-        <h2>Tisch reservieren</h2>
-
-        <br>
-
-        <form onsubmit="event.preventDefault();alert('Reservierung bestätigt!')">
-
-            <input placeholder="Name">
-
-            <input placeholder="Telefon">
-
-            <input type="date">
-
-            <input type="time">
-
-            <input placeholder="Personen">
-
-<textarea placeholder="Nachricht"></textarea>
-
-            <button class="btn btn-primary">Reservieren</button>
-
-        </form>
-
-    </section>
-
-    <footer>
-
-        <p>das!Burger - in a box</p>
-
-        <p>Louis-Buchelt-Straße 1, Wiesbaden</p>
-
-        <p>📞 0611 20551616</p>
-
-        <p>⭐ 4.1 / 5 (122 Bewertungen)</p>
-
-        <br>
-
-        <a href="#">Impressum</a> |
-        <a href="#">Datenschutz</a>
-
     </footer>
 
-    <div class="bottom-bar">
-        <button class="btn">Jetzt bestellen</button>
-    </div>
-
     <script>
+        // --------- LENIS: Buttery Smooth Scrolling ---------
+        const lenis = new Lenis({
+            duration: 1.5,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+        });
 
-let cart=0
+        // Integriere Lenis mit GSAP ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
 
-function addCart(e){
+        // Navbar Backdrop Blur on Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-[rgba(5,5,5,0.7)]', 'backdrop-blur-xl', 'border-b', 'border-[rgba(255,255,255,0.05)]');
+            } else {
+                nav.classList.remove('bg-[rgba(5,5,5,0.7)]', 'backdrop-blur-xl', 'border-b', 'border-[rgba(255,255,255,0.05)]');
+            }
+        });
 
-cart++
 
-document.getElementById("cart").innerText=cart
+        // --------- CANVAS SEQUENCE ENGINE (Procedural Fallback) ---------
+        // Da wir lokal arbeiten und du keine Bilder benötigst,
+        // simulieren wir den Look einer Apple-style 3D-Wireframe-Animation live im Browser Array!
 
-let fly=document.createElement("div")
-fly.className="fly"
+        const canvas = document.getElementById('sequence-canvas');
+        const ctx = canvas.getContext('2d');
+        // Wir erhöhen die Frame-Anzahl signifikant für butterweiches Scrolling (400vh -> viel Scrollweg = mehr nötige Frames)
+        const FRAME_COUNT = 360;
+        const frames = [];
+        let loadedFrames = 0;
 
-document.body.appendChild(fly)
+        // Setup Canvas Size (Dynamisch und mit Resize Listener)
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            if (typeof playhead !== "undefined") {
+                const renderFrame = window.__renderFrameFunc;
+                if (renderFrame) renderFrame(Math.round(playhead.frame));
+            }
+        });
+        resizeCanvas();
 
-setTimeout(()=>fly.remove(),800)
+        const renderWidth = 1920;
+        const renderHeight = 1080;
 
-}
+        const loaderBar = document.getElementById('loader-bar');
 
-function filter(cat){
+        // Funktion: Procedural 3D Wireframe Frame-Generation
+        async function generateSequence() {
+            const offscreen = document.createElement('canvas');
+            offscreen.width = renderWidth;
+            offscreen.height = renderHeight;
+            const oCtx = offscreen.getContext('2d');
 
-let items=document.querySelectorAll("#menu-items .card")
+            for (let i = 0; i < FRAME_COUNT; i++) {
+                const progress = i / (FRAME_COUNT - 1); // 0.0 to 1.0
 
-items.forEach(el=>{
-if(cat=="all") el.style.display="block"
-else if(el.classList.contains(cat)) el.style.display="block"
-else el.style.display="none"
-})
+                // Clear state
+                oCtx.fillStyle = '#050505'; // Exact dark background as requested
+                oCtx.fillRect(0, 0, renderWidth, renderHeight);
 
-}
+                oCtx.save();
+                oCtx.translate(renderWidth / 2, renderHeight / 2);
 
-window.addEventListener("scroll",()=>{
-let h=document.getElementById("header")
-if(window.scrollY>100) h.classList.add("small")
-else h.classList.remove("small")
-})
+                // --- Transformation Logic based on Story Beats ---
+                // 0-15%: Pulsating Logo
+                // 15-40%: 3D Rotation & Wireframe reveal
+                // 40-70%: Morph into Layout/Grid
+                // 70-100%: Glow & Finalize
 
+                const easing = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                // Rotation and scale logic
+                const rotation = progress * Math.PI * 4;
+                const scale = 1 + Math.sin(progress * Math.PI) * 0.5;
+                oCtx.rotate(rotation);
+                oCtx.scale(scale, scale);
+
+                // Draw technical lines/orbitals
+                const lines = 12;
+                for (let j = 0; j < lines; j++) {
+                    const angle = (j / lines) * Math.PI * 2 + (progress * 2);
+
+                    // The "Logo Module"
+                    oCtx.beginPath();
+                    const radiusX = 200 + (Math.sin(progress * Math.PI * 2) * 100);
+                    const radiusY = 100 + (progress * 200);
+
+                    oCtx.ellipse(0, 0, radiusX, radiusY, angle, 0, Math.PI * 2);
+
+                    // Dynamic coloring: Deep blue to Electric Cyan
+                    const strokeOpacity = Math.min(1, Math.max(0.1, 1 - progress * 0.5));
+                    if (progress > 0.5) {
+                        oCtx.strokeStyle = `rgba(0, 214, 255, ${strokeOpacity * 0.8})`; // Cyan
+                    } else {
+                        oCtx.strokeStyle = `rgba(0, 80, 255, ${strokeOpacity})`; // Deep Blue
+                    }
+
+                    oCtx.lineWidth = 1.5 + (progress * 2);
+                    oCtx.stroke();
+                }
+
+                // Inner core
+                oCtx.beginPath();
+                oCtx.arc(0, 0, 50 + (progress * 150), 0, Math.PI * 2);
+                oCtx.fillStyle = `rgba(0, 80, 255, ${0.1 + progress * 0.2})`;
+                oCtx.fill();
+                oCtx.strokeStyle = "#ffffff";
+                oCtx.lineWidth = 1;
+                oCtx.stroke();
+
+                oCtx.restore();
+
+                // Partikel Simulation im Hintergrund (Sterne/Punkte)
+                oCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
+                for (let p = 0; p < 50; p++) {
+                    const px = (Math.sin(p * 100 + progress * 10) * renderWidth / 2) + renderWidth / 2;
+                    const py = (Math.cos(p * 50 - progress * 5) * renderHeight / 2) + renderHeight / 2;
+                    oCtx.beginPath();
+                    oCtx.arc(px, py, 1.5, 0, Math.PI * 2);
+                    oCtx.fill();
+                }
+
+                // Save frame as Image data to memory
+                const img = new Image();
+                img.src = offscreen.toDataURL('image/webp', 0.8);
+
+                // Wait for image to be somewhat parsed (though data url is sync, making it a promise helps UI updates)
+                await new Promise(r => { img.onload = r; });
+                frames.push(img);
+
+                // Update Loader
+                loaderBar.style.width = `${((i + 1) / FRAME_COUNT) * 100}%`;
+
+                // Yield to main thread briefly so UI doesn't freeze entirely
+                if (i % 5 === 0) {
+                    await new Promise(r => setTimeout(r, 0));
+                }
+            }
+
+            initScrollyTelling();
+        }
+
+        // Starte den Frame-Ladevorgang nach DOMContentLoaded
+        if (typeof window !== "undefined") {
+            generateSequence();
+        }
+
+        // --------- GSAP STORY ANIMATIONS & CANVAS RENDER LOOP ---------
+        let playhead;
+
+        function initScrollyTelling() {
+            // Hide Loader
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; }, 800);
+
+            // 1. Initial Frame on Canvas (Render First Frame)
+            const renderFrame = (index) => {
+                const img = frames[index];
+                if (img && img.width > 0) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Berechne "object-fit: cover" Logik für das Canvas DrawImage
+                    const canvasRatio = canvas.width / canvas.height;
+                    const imgRatio = img.width / img.height;
+
+                    let drawWidth = canvas.width;
+                    let drawHeight = canvas.height;
+                    let offsetX = 0;
+                    let offsetY = 0;
+
+                    if (canvasRatio > imgRatio) {
+                        // Canvas ist breiter -> Skaliere auf Breite
+                        drawWidth = canvas.width;
+                        drawHeight = canvas.width / imgRatio;
+                        offsetY = (canvas.height - drawHeight) / 2;
+                    } else {
+                        // Canvas ist schmaler -> Skaliere auf Höhe
+                        drawHeight = canvas.height;
+                        drawWidth = canvas.height * imgRatio;
+                        offsetX = (canvas.width - drawWidth) / 2;
+                    }
+
+                    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+                }
+            };
+            window.__renderFrameFunc = renderFrame;
+            renderFrame(0);
+
+            // 2. State object for GSAP to animate (0 to FRAME_COUNT-1)
+            playhead = { frame: 0 };
+
+            // GSAP ScrollTrigger for Canvas Sequence Playback
+            gsap.to(playhead, {
+                frame: FRAME_COUNT - 1,
+                snap: "frame", // Snap to whole integers
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".story-container",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 1.5, // Erhöhte lerp/smoothing Zeit (1.5s) für buttersweiches Scrolling
+                    onUpdate: () => window.__renderFrameFunc(Math.round(playhead.frame))
+                }
+            });
+
+            // 3. UI Overlays Animation Ranges (Story Beats)
+
+            // Panel 1: Hero (Fade In at start, fade out quickly)
+            gsap.fromTo("#panel-1",
+                { opacity: 1, y: 0 },
+                {
+                    opacity: 0, y: -100,
+                    scrollTrigger: {
+                        trigger: ".story-container",
+                        start: "top top",
+                        end: "10% top",
+                        scrub: true
+                    }
+                }
+            );
+
+            // Panel 2: Engineering Reveal
+            gsap.fromTo("#panel-2",
+                { opacity: 0, y: 100 },
+                {
+                    opacity: 1, y: 0,
+                    scrollTrigger: {
+                        trigger: ".story-container",
+                        start: "15% top",
+                        end: "25% top",
+                        scrub: true
+                    }
+                }
+            );
+            gsap.to("#panel-2", {
+                opacity: 0, y: -100,
+                scrollTrigger: {
+                    trigger: ".story-container",
+                    start: "35% top",
+                    end: "45% top",
+                    scrub: true
+                }
+            });
+
+            // Panel 3: Product to Platform
+            gsap.fromTo("#panel-3",
+                { opacity: 0, x: -100 },
+                {
+                    opacity: 1, x: 0,
+                    scrollTrigger: {
+                        trigger: ".story-container",
+                        start: "45% top",
+                        end: "55% top",
+                        scrub: true
+                    }
+                }
+            );
+            gsap.to("#panel-3", {
+                opacity: 0, y: -100,
+                scrollTrigger: {
+                    trigger: ".story-container",
+                    start: "60% top",
+                    end: "70% top",
+                    scrub: true
+                }
+            });
+
+            // Panel 4: Final CTA Glass Card
+            gsap.fromTo("#panel-4",
+                { opacity: 0, scale: 0.9, y: 50 },
+                {
+                    opacity: 1, scale: 1, y: 0,
+                    scrollTrigger: {
+                        trigger: ".story-container",
+                        start: "75% top",
+                        end: "85% top",
+                        scrub: true
+                    }
+                }
+            );
+            // Keep Panel 4 visible until end
+            gsap.to("#panel-4", {
+                opacity: 1,
+                scrollTrigger: {
+                    trigger: ".story-container",
+                    start: "85% top",
+                    end: "bottom bottom",
+                    scrub: true
+                }
+            });
+        }
     </script>
-
 </body>
 </html>
