@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Flow State - Boost your Company Image - Moderne Websites und AI-Lösungen für Unternehmen">
+    <meta name="description" content="Flow State - Boost Your Company Image - Moderne Webseiten und AI-Lösungen für Unternehmen.">
     <title>Flow State - Steigere das Image Deines Unternehmens</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -12,8 +12,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #050505;
             color: #ffffff;
-            padding: 24px;
-            box-sizing: border-box;
+            overflow-y: auto; /* Scrollen erlauben */
         }
 
         header {
@@ -23,8 +22,8 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            backdrop-filter: blur(10px);
             padding: 16px 32px;
+            background: rgba(5, 5, 5, 0.8);
             transition: background 0.3s ease;
         }
 
@@ -46,8 +45,6 @@
 
                 nav a:hover {
                     color: #6C4BFF;
-                    padding: 4px;
-                    border-bottom: 2px solid #6C4BFF;
                 }
 
         .cta-button {
@@ -66,26 +63,29 @@
             }
 
         .hero {
-            height: 80vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
             position: relative;
             padding: 24px;
-            overflow: hidden;
+            z-index: 1;
+            text-align: center;
         }
 
             .hero h1 {
                 font-size: 3rem;
-                margin: 0;
-                letter-spacing: 0.1em;
+                margin: 0 0 20px;
+                text-shadow: 0 0 10px rgba(0, 214, 255, 0.7);
             }
 
-        .letter {
-            display: inline-block;
-            transition: transform 0.3s, background 0.3s;
+        .details {
+            font-size: 1.2rem;
+            max-width: 600px;
+            line-height: 1.5;
+            margin: 0 auto;
+            padding: 0 10px;
         }
 
         .service-cards {
@@ -93,6 +93,9 @@
             justify-content: space-around;
             flex-wrap: wrap;
             margin: 24px 0;
+            opacity: 0; /* Start bei 0 für die Animation */
+            transform: translateY(20px); /* Startposition */
+            transition: opacity 0.5s, transform 0.5s; /* Animation */
         }
 
         .service-card {
@@ -100,12 +103,13 @@
             border-radius: 10px;
             padding: 20px;
             margin: 12px;
-            flex: 1 1 250px;
+            flex: 1 1 calc(25% - 24px);
+            text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
             .service-card:hover {
-                transform: translateY(-5px) scale(1.03);
+                transform: translateY(-5px) scale(1.05);
                 box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
             }
 
@@ -119,11 +123,13 @@
             display: flex;
             justify-content: space-around;
             margin: 24px 0;
+            opacity: 0; /* Start bei 0 für die Animation */
+            transform: translateY(20px); /* Startposition */
+            transition: opacity 0.5s, transform 0.5s; /* Animation */
         }
 
         .team-member {
             text-align: center;
-            position: relative;
             transition: transform 0.3s;
         }
 
@@ -132,33 +138,13 @@
                 height: 100px;
                 border-radius: 50%;
                 object-fit: cover;
-                object-position: center 25%;
                 transition: transform 0.3s, box-shadow 0.3s;
             }
 
             .team-member:hover img {
                 transform: scale(1.08);
-                box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+                box-shadow: 0 0 15px rgba(0, 214, 255, 0.8);
             }
-
-        .tooltip {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px;
-            border-radius: 5px;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .team-member:hover .tooltip {
-            display: block;
-            opacity: 1;
-        }
 
         footer {
             text-align: center;
@@ -166,20 +152,128 @@
             padding: 16px 0;
         }
 
-        #backgroundAnimation {
-            position: absolute;
+        .modal {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #070708;
+            padding: 24px;
+            border-radius: 8px;
+            width: 400px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal button {
+            padding: 10px;
+            border: none;
+            background: #00D6FF;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 16px;
+        }
+
+            .modal button:hover {
+                background: #6C4BFF;
+            }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #ffffff;
+            border: none;
+            background: none;
+            font-size: 20px;
         }
 
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2rem;
             }
+
+            .service-card {
+                width: 90%;
+            }
+
+            nav {
+                flex-direction: column;
+            }
         }
+
+        /* Hintergrund-Animation */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .ball {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 214, 255, 0.5);
+            transform: translateZ(0); /* 3D-Effekt */
+            animation: moveBall 10s infinite;
+        }
+
+        @keyframes moveBall {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+
+            25% {
+                transform: translate3d(200px, -100px, 50px) scale(1.2);
+            }
+
+            50% {
+                transform: translate3d(-100px, 200px, 20px) scale(1);
+            }
+
+            75% {
+                transform: translate3d(100px, 100px, 30px) scale(1.2);
+            }
+
+            100% {
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        /* Animation für das Einfliegen der Elemente */
+        .slide-in {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+            .slide-in.visible {
+                opacity: 1;
+                transform: translateY(0);
+                transition: opacity 0.6s, transform 0.6s;
+            }
     </style>
 </head>
 <body>
@@ -189,44 +283,20 @@
             <a href="#services">Leistungen</a>
             <a href="#team">Unser Team</a>
             <a href="#about">Über uns</a>
-            <a href="#contact">Kontakt</a>
         </nav>
-        <button class="cta-button">Kontakt aufnehmen</button>
+        <button class="cta-button" id="contactButton">Kontakt aufnehmen</button>
     </header>
 
     <div class="hero">
-        <h1>
-            <span class="letter">B</span>
-            <span class="letter">o</span>
-            <span class="letter">o</span>
-            <span class="letter">s</span>
-            <span class="letter">t</span>
-            <span class="letter"> </span>
-            <span class="letter">Y</span>
-            <span class="letter">o</span>
-            <span class="letter">u</span>
-            <span class="letter">r</span>
-            <span class="letter"> </span>
-            <span class="letter">C</span>
-            <span class="letter">o</span>
-            <span class="letter">m</span>
-            <span class="letter">p</span>
-            <span class="letter">a</span>
-            <span class="letter">n</span>
-            <span class="letter">y</span>
-            <span class="letter"> </span>
-            <span class="letter">I</span>
-            <span class="letter">m</span>
-            <span class="letter">a</span>
-            <span class="letter">g</span>
-            <span class="letter">e</span>
-        </h1>
-        <div class="details">Flow State entwickelt moderne Websites und intelligente AI-Berater, die das Image und die Kommunikation von Unternehmen verbessern.</div>
+        <h1>Boost Your Company Image</h1>
+        <div class="details">
+            Flow State entwickelt moderne Webseiten und intelligente AI-Berater, die das Image und die Kommunikation von Unternehmen verbessern.
+        </div>
     </div>
 
     <section id="services">
         <h2>Unsere Leistungen</h2>
-        <div class="service-cards">
+        <div class="service-cards slide-in" id="servicesCards">
             <div class="service-card">
                 <svg class="service-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C9.79 2 8 3.79 8 6v4H4v2h4v4h2v-4h4V8h-4V6c0-1.1.9-2 2-2h2V2h-2z" /></svg>
                 <h3>Moderne Websites</h3>
@@ -243,12 +313,12 @@
                 <p>KI-Systeme, die Kundenanrufe automatisch beantworten</p>
             </div>
             <div class="service-card">
-                <svg class="service-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a10 10 0 10.001 20.001A10 10 0 0012 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" /></svg>
+                <svg class="service-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2 15h-2v-2h2v2zm0-4h-2V7h2v6z" /></svg>
                 <h3>Automatisierter Kundenservice</h3>
                 <p>Intelligente Systeme für Support und Kommunikation</p>
             </div>
             <div class="service-card">
-                <svg class="service-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2 15.93V17h1.59L15 14.41l-.59.59H14v-1h-4v1h-.41l-1.59-1.59L10 17h1.59z" /></svg>
+                <svg class="service-icon" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2 15h-2v-2h2v2zm0-4h-2V7h2v6z" /></svg>
                 <h3>Image-Optimierung</h3>
                 <p>Verbesserung des digitalen Markenauftritts</p>
             </div>
@@ -257,27 +327,37 @@
 
     <section id="team">
         <h2>Unser Team</h2>
-        <div class="team-container">
+        <div class="team-container slide-in" id="teamContainer">
             <div class="team-member">
                 <img src="BenetTelinski.jpeg" alt="Bennet Bo Peter Telinski">
                 <h3>Bennet Bo Peter Telinski</h3>
                 <p>CEO & Co-CEO</p>
-                <div class="tooltip">Bennet Bo Peter Telinski<br><a href="mailto:bennet@example.com">Kontakt</a></div>
             </div>
             <div class="team-member">
                 <img src="AdrianPötzinger.jpeg" alt="Adrian Pötzinger">
                 <h3>Adrian Pötzinger</h3>
                 <p>CEO & Co-CEO</p>
-                <div class="tooltip">Adrian Pötzinger<br><a href="mailto:adrian@example.com">Kontakt</a></div>
             </div>
             <div class="team-member">
                 <img src="DamianBraun.jpeg" alt="Damian Braun">
                 <h3>Damian Braun</h3>
                 <p>Programmierer</p>
-                <div class="tooltip">Damian Braun<br><a href="mailto:damian@example.com">Kontakt</a></div>
             </div>
         </div>
     </section>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button class="close" id="closeModal">&times;</button>
+            <h3>Kontakt</h3>
+            <form id="contactForm">
+                <input type="text" placeholder="Name" required>
+                <input type="email" placeholder="Email" required>
+                <textarea rows="4" placeholder="Nachricht" required></textarea>
+                <button type="submit">Nachricht senden</button>
+            </form>
+        </div>
+    </div>
 
     <footer>
         <img src="Logo.png" alt="Flow State Logo" class="logo">
@@ -286,47 +366,40 @@
         <p>&copy; 2023 Flow State. Alle Rechte vorbehalten.</p>
     </footer>
 
-    <canvas id="backgroundAnimation"></canvas>
+    <div class="background-animation">
+        <div class="ball" style="width: 80px; height: 80px; top: 20%; left: 30%; animation-delay: 0s;"></div>
+        <div class="ball" style="width: 60px; height: 60px; top: 50%; left: 60%; animation-delay: 1s;"></div>
+        <div class="ball" style="width: 100px; height: 100px; top: 70%; left: 10%; animation-delay: 2s;"></div>
+        <div class="ball" style="width: 40px; height: 40px; top: 30%; left: 80%; animation-delay: 3s;"></div>
+        <div class="ball" style="width: 90px; height: 90px; top: 10%; left: 50%; animation-delay: 4s;"></div>
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // 3D Scroll-basierte Animation
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('backgroundAnimation'), alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        const geometry = new THREE.SphereGeometry(1, 32, 32);
-        const material = new THREE.MeshStandardMaterial({ color: 0x0000ff, emissive: 0x00d6ff });
-        const sphere = new THREE.Mesh(geometry, material);
-        scene.add(sphere);
-
-        camera.position.z = 5;
-
-        const light = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(light);
-
-        let scrollSpeed = 0;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            sphere.rotation.x += 0.01 + scrollSpeed;
-            sphere.rotation.y += 0.01 + scrollSpeed;
-            renderer.render(scene, camera);
-        }
-
-        window.addEventListener('scroll', () => {
-            scrollSpeed = window.scrollY * 0.0001;
+        document.getElementById('contactButton').addEventListener('click', function () {
+            document.getElementById('modal').style.display = 'flex';
+        });
+        document.getElementById('closeModal').addEventListener('click', function () {
+            document.getElementById('modal').style.display = 'none';
+        });
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Nachricht gesendet!');
+            document.getElementById('modal').style.display = 'none';
         });
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        window.addEventListener('scroll', function () {
+            const serviceCards = document.getElementById('servicesCards');
+            const teamContainer = document.getElementById('teamContainer');
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
 
-        animate();
+            if (scrollTop + windowHeight > serviceCards.offsetTop) {
+                serviceCards.classList.add('visible');
+            }
+            if (scrollTop + windowHeight > teamContainer.offsetTop) {
+                teamContainer.classList.add('visible');
+            }
+        });
     </script>
 </body>
 </html>
