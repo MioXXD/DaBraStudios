@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Flow State – Moderne Webseiten und AI-Lösungen für Unternehmen.">
+    <meta name="theme-color" content="#080810">
     <title>Flow State – Boost Your Company Image</title>
 
     <!-- Fonts: Poppins (headings) + Inter (body) -->
@@ -11,8 +12,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
+    <!-- GSAP + Lenis (Smooth Scroll & ScrollTrigger) -->
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
     <style>
-        /* ─── DESIGN TOKENS ──────────────────────────────── */
+        /* ─── DESIGN TOKENS ──────────────────────────────────── */
         :root {
             --bg:           #080810;
             --surface:      #0f0f1a;
@@ -25,15 +31,17 @@
             --text-1:       #F1F5F9;
             --text-2:       #94A3B8;
             --text-3:       #475569;
-            --r-sm:  8px;
-            --r-md:  12px;
-            --r-lg:  20px;
-            --r-xl:  28px;
+            --r-sm: 8px;
+            --r-md: 12px;
+            --r-lg: 20px;
+            --r-xl: 28px;
         }
 
-        /* ─── RESET ──────────────────────────────────────── */
+        /* ─── RESET ──────────────────────────────────────────── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
+
+        /* Managed by Lenis — no native smooth scroll */
+        html { scroll-behavior: auto !important; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -44,32 +52,33 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ─── CLEAN BACKGROUND GRADIENT — NO DOTS ────────── */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 70% 50% at 15% -10%, rgba(124, 58, 237, 0.14) 0%, transparent 55%),
-                radial-gradient(ellipse 55% 40% at 85% 90%,  rgba(6, 182, 212, 0.07)  0%, transparent 55%);
-            pointer-events: none;
-            z-index: 0;
-        }
+        /* Hide scrollbar (Lenis handles it) */
+        ::-webkit-scrollbar { width: 0; background: transparent; }
 
-        /* ─── NAVBAR ─────────────────────────────────────── */
+        /* ─── FIXED HEADER ───────────────────────────────────── */
         header {
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
+            left: 0;
+            right: 0;
+            z-index: 1000;
             height: 64px;
             padding: 0 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(8, 8, 16, 0.75);
+            background: rgba(8, 8, 16, 0.0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            border-bottom: 1px solid transparent;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease;
+        }
+
+        header.scrolled {
+            background: rgba(8, 8, 16, 0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
+            border-bottom-color: var(--border);
         }
 
         .logo { width: 110px; height: auto; }
@@ -87,11 +96,12 @@
             font-weight: 500;
             letter-spacing: 0.01em;
             transition: color 0.2s;
+            cursor: pointer;
         }
 
         nav a:hover { color: var(--text-1); }
 
-        /* ─── BUTTONS ────────────────────────────────────── */
+        /* ─── BUTTONS ────────────────────────────────────────── */
         .btn-primary {
             display: inline-flex;
             align-items: center;
@@ -140,19 +150,132 @@
             border-color: rgba(255, 255, 255, 0.22);
         }
 
-        /* ─── HERO ───────────────────────────────────────── */
-        .hero {
+        /* Rotating border button (for panels) */
+        .btn-gradient {
             position: relative;
-            z-index: 1;
-            min-height: calc(100dvh - 64px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 80px 24px 64px;
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: #C4B5FD;
+            border-radius: var(--r-md);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: conic-gradient(from 0deg, transparent, #7C3AED, #06B6D4, transparent 30%);
+            animation: rotate-border 4s linear infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
+        }
+
+        .btn-gradient:hover::before { opacity: 1; }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(124, 58, 237, 0.4);
+            color: #fff;
+        }
+
+        @keyframes rotate-border { 100% { transform: rotate(360deg); } }
+
+        /* ─── SCROLLYTELLING: STORY CONTAINER ────────────────── */
+        .story-container {
+            position: relative;
+            height: 400vh;
+            width: 100%;
+        }
+
+        /* Sticky canvas viewport */
+        .sticky-viewport {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glow-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background: radial-gradient(circle at center, rgba(124, 58, 237, 0.12), transparent 60%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Content overlay layer */
+        .content-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Each panel = one story beat */
+        .panel {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 10vw;
+            padding-top: 64px; /* offset for fixed header */
+            opacity: 0;
+            will-change: opacity, transform;
+        }
+
+        .panel.interactive { pointer-events: auto; }
+
+        /* Panel text styles */
+        .panel-headline {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+
+        .panel-sub {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-2);
+            line-height: 1.7;
+            font-weight: 300;
+            max-width: 560px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(130deg, #fff 0%, #C4B5FD 45%, #67E8F9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Hero badge (panel 1) */
         .hero-badge {
             display: inline-flex;
             align-items: center;
@@ -164,7 +287,7 @@
             font-size: 0.78rem;
             font-weight: 500;
             color: #C4B5FD;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             letter-spacing: 0.02em;
         }
 
@@ -181,63 +304,91 @@
             50%       { opacity: 0.35; }
         }
 
-        .hero h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(2.6rem, 6.5vw, 5.2rem);
-            font-weight: 800;
-            line-height: 1.08;
-            letter-spacing: -0.035em;
-            margin-bottom: 24px;
-            max-width: 820px;
-        }
-
-        .gradient-text {
-            background: linear-gradient(130deg, #fff 0%, #C4B5FD 45%, #67E8F9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            font-size: clamp(1rem, 2.2vw, 1.18rem);
-            color: var(--text-2);
-            max-width: 560px;
-            line-height: 1.75;
-            margin-bottom: 40px;
-        }
-
+        /* Hero CTAs */
         .hero-ctas {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 56px;
+            margin-top: 32px;
         }
 
+        /* Trust strip */
         .trust-strip {
             display: flex;
-            gap: 28px;
+            gap: 24px;
             flex-wrap: wrap;
-            justify-content: center;
+            margin-top: 40px;
         }
 
         .trust-item {
             display: flex;
             align-items: center;
             gap: 7px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--text-3);
         }
 
         .trust-item svg { color: #A78BFA; flex-shrink: 0; }
 
-        /* ─── SECTION SKELETON ───────────────────────────── */
-        section {
+        /* Panel 4: CTA card */
+        .cta-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-xl);
+            padding: 48px;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .cta-card p {
+            color: var(--text-2);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        .cta-card .btn-gradient {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 1rem;
+        }
+
+        .cta-fine {
+            font-size: 0.75rem;
+            color: var(--text-3);
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        /* ─── SECTION STYLES ─────────────────────────────────── */
+        .content-sections {
             position: relative;
-            z-index: 1;
+            z-index: 20;
+            background: var(--bg);
+        }
+
+        section {
             padding: 96px 40px;
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 0;
         }
 
         .section-label {
@@ -267,13 +418,7 @@
             margin-bottom: 52px;
         }
 
-        .section-divider {
-            border: none;
-            border-top: 1px solid var(--border);
-            margin: 0;
-        }
-
-        /* ─── SERVICES ───────────────────────────────────── */
+        /* ─── SERVICES ───────────────────────────────────────── */
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
@@ -291,9 +436,7 @@
         .service-card:hover {
             border-color: rgba(124, 58, 237, 0.38);
             transform: translateY(-5px);
-            box-shadow:
-                0 20px 48px rgba(0, 0, 0, 0.32),
-                0 0 0 1px rgba(124, 58, 237, 0.08);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(124, 58, 237, 0.08);
         }
 
         .icon-wrap {
@@ -323,7 +466,7 @@
             line-height: 1.65;
         }
 
-        /* ─── TEAM ───────────────────────────────────────── */
+        /* ─── TEAM ───────────────────────────────────────────── */
         .team-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -370,7 +513,7 @@
             font-weight: 500;
         }
 
-        /* ─── MODAL ──────────────────────────────────────── */
+        /* ─── MODAL ──────────────────────────────────────────── */
         .modal {
             display: none;
             position: fixed;
@@ -378,7 +521,7 @@
             background: rgba(0, 0, 0, 0.55);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            z-index: 500;
+            z-index: 2000;
             align-items: center;
             justify-content: center;
             padding: 24px;
@@ -491,10 +634,11 @@
 
         .btn-submit:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-        /* ─── FOOTER ─────────────────────────────────────── */
+        /* ─── FOOTER ─────────────────────────────────────────── */
         footer {
             position: relative;
-            z-index: 1;
+            z-index: 20;
+            background: var(--bg);
             border-top: 1px solid var(--border);
             padding: 52px 40px;
             text-align: center;
@@ -516,7 +660,7 @@
 
         footer p { font-size: 0.78rem; color: var(--text-3); line-height: 1.7; }
 
-        /* ─── SCROLL REVEAL ──────────────────────────────── */
+        /* ─── SCROLL REVEAL (sections after scrollytelling) ── */
         .fade-up {
             opacity: 0;
             transform: translateY(28px);
@@ -525,25 +669,29 @@
 
         .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-        /* ─── RESPONSIVE ─────────────────────────────────── */
+        /* ─── RESPONSIVE ─────────────────────────────────────── */
         @media (max-width: 768px) {
             header { padding: 0 20px; }
             nav { display: none; }
             section { padding: 64px 20px; }
             footer { padding: 40px 20px; }
 
-            .hero { padding: 56px 20px 48px; }
-            .hero-ctas { flex-direction: column; width: 100%; max-width: 280px; }
-            .btn-primary, .btn-ghost { width: 100%; }
+            .panel { padding: 0 6vw; padding-top: 64px; }
+
+            .hero-ctas { flex-direction: column; max-width: 260px; }
+            .btn-primary, .btn-ghost { justify-content: center; }
             .trust-strip { gap: 16px; }
+
+            .cta-card { padding: 32px 24px; }
         }
 
         @media (max-width: 480px) {
             .services-grid { grid-template-columns: 1fr; }
             .team-grid { grid-template-columns: 1fr; }
+            .panel-headline { font-size: 2.2rem; }
         }
 
-        /* ─── ACCESSIBILITY ──────────────────────────────── */
+        /* ─── ACCESSIBILITY ──────────────────────────────────── */
         :focus-visible {
             outline: 2px solid #A78BFA;
             outline-offset: 3px;
@@ -552,66 +700,127 @@
         @media (prefers-reduced-motion: reduce) {
             .fade-up { transition: none; opacity: 1; transform: none; }
             .badge-dot { animation: none; }
+            .btn-gradient::before { animation: none; }
             * { transition-duration: 0.01ms !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <header>
+    <!-- ═══ FIXED HEADER ══════════════════════════════════════ -->
+    <header id="site-header">
         <img src="Logo.png" alt="Flow State" class="logo">
         <nav aria-label="Hauptnavigation">
-            <a href="#services">Leistungen</a>
-            <a href="#team">Unser Team</a>
-            <a href="#about">Über uns</a>
+            <a href="#services" class="nav-link">Leistungen</a>
+            <a href="#team"     class="nav-link">Unser Team</a>
+            <a href="#about"    class="nav-link">Über uns</a>
         </nav>
         <button class="btn-primary" id="contactButton" aria-haspopup="dialog">
             Kontakt aufnehmen
         </button>
     </header>
 
-    <main>
+    <!-- ═══ SCROLLYTELLING (400vh) ════════════════════════════ -->
+    <div class="story-container">
 
-        <!-- HERO -->
-        <div class="hero" aria-labelledby="hero-heading">
-            <div class="hero-badge">
-                <span class="badge-dot" aria-hidden="true"></span>
-                Webseiten &amp; AI-Lösungen
-            </div>
-            <h1 id="hero-heading">
-                Boost Your<br>
-                <span class="gradient-text">Company Image</span>
-            </h1>
-            <p>
-                Flow State entwickelt moderne Webseiten und intelligente AI-Berater,
-                die das Image und die Kommunikation Ihres Unternehmens transformieren.
-            </p>
-            <div class="hero-ctas">
-                <button class="btn-primary" id="heroContactBtn" aria-haspopup="dialog">
-                    Projekt anfragen
-                </button>
-                <a href="#services" class="btn-ghost">Leistungen ansehen</a>
-            </div>
-            <div class="trust-strip" role="list">
-                <div class="trust-item" role="listitem">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                    Kostenlose Erstberatung
-                </div>
-                <div class="trust-item" role="listitem">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                    Vertraulich &amp; sicher
-                </div>
-                <div class="trust-item" role="listitem">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                    Schnelle Lieferung
-                </div>
-            </div>
+        <!-- Sticky canvas layer -->
+        <div class="sticky-viewport">
+            <div class="glow-overlay" aria-hidden="true"></div>
+            <canvas id="sequence-canvas" aria-hidden="true"></canvas>
         </div>
+
+        <!-- Text overlay panels -->
+        <div class="content-layer" aria-hidden="true">
+
+            <!-- Panel 1: Hero ──────── top: 0 -->
+            <div class="panel" id="panel-1"
+                 style="top: 0; justify-content: center; text-align: center; flex-direction: column; align-items: center;"
+                 aria-hidden="false">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    Webseiten &amp; AI-Lösungen
+                </div>
+                <h1 class="panel-headline">
+                    Boost Your<br>
+                    <span class="gradient-text">Company Image</span>
+                </h1>
+                <p class="panel-sub" style="text-align:center; margin: 0 auto;">
+                    Flow State entwickelt moderne Webseiten und intelligente AI-Berater,
+                    die das Image und die Kommunikation Ihres Unternehmens transformieren.
+                </p>
+                <div class="hero-ctas interactive" style="pointer-events:auto;">
+                    <button class="btn-primary" id="heroContactBtn" aria-haspopup="dialog">
+                        Projekt anfragen
+                    </button>
+                    <a href="#services" class="btn-ghost nav-link">Leistungen ansehen</a>
+                </div>
+                <div class="trust-strip">
+                    <div class="trust-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        Kostenlose Erstberatung
+                    </div>
+                    <div class="trust-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        Vertraulich &amp; sicher
+                    </div>
+                    <div class="trust-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                        Schnelle Lieferung
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 2: Engineering Reveal ── top: 120vh -->
+            <div class="panel" id="panel-2" style="top: 120vh; justify-content: flex-start;">
+                <div>
+                    <h2 class="panel-headline">Engineering<br>Reveal.</h2>
+                    <p class="panel-sub">
+                        Pixelperfektion trifft auf kompromisslose Performance.
+                        Jede Zeile Code ist orchestriert für maximale Wirkung.
+                        Die innere Struktur Ihrer Marke wird sichtbar.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Panel 3: Skalierbare Plattform ── top: 220vh -->
+            <div class="panel" id="panel-3" style="top: 220vh; justify-content: flex-end; text-align: right;">
+                <div>
+                    <h2 class="panel-headline" style="color:#C4B5FD;">Skalierbare<br>Plattform.</h2>
+                    <p class="panel-sub" style="margin-left: auto;">
+                        Design, SEO, Speed. Eine nahtlose Architektur,
+                        bereit den Markt zu dominieren und Vertrauen aufzubauen.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Panel 4: CTA ── top: 320vh -->
+            <div class="panel interactive" id="panel-4"
+                 style="top: 320vh; justify-content: center; text-align: center; flex-direction: column; align-items: center;"
+                 aria-hidden="false">
+                <div class="cta-card">
+                    <h2>Bereit für den<br><span class="gradient-text">Flow State?</span></h2>
+                    <p>
+                        Lass uns gemeinsam deine Vision und digitale Identität
+                        auf das nächste Level heben.
+                    </p>
+                    <button class="btn-gradient" id="ctaContactBtn"
+                            style="width:100%; padding:16px 24px; font-size:1rem;"
+                            aria-haspopup="dialog">
+                        Projekt jetzt anfragen
+                    </button>
+                    <p class="cta-fine">Absolut vertraulich. Erstgespräch kostenlos.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══ SERVICES + TEAM + FOOTER ═════════════════════════ -->
+    <div class="content-sections">
 
         <hr class="section-divider" aria-hidden="true">
 
-        <!-- SERVICES -->
+        <!-- SERVICES ──────────────────────────────────────── -->
         <section id="services" aria-labelledby="services-heading">
             <span class="section-label">Leistungen</span>
             <h2 class="section-title" id="services-heading">Alles aus einer Hand</h2>
@@ -679,7 +888,7 @@
 
         <hr class="section-divider" aria-hidden="true">
 
-        <!-- TEAM -->
+        <!-- TEAM ──────────────────────────────────────────── -->
         <section id="team" aria-labelledby="team-heading">
             <span class="section-label">Das Team</span>
             <h2 class="section-title" id="team-heading">Menschen hinter Flow State</h2>
@@ -690,8 +899,8 @@
             <div class="team-grid fade-up" id="teamContainer">
 
                 <div class="team-card">
-                    <img src="BenetTelinski.jpeg" alt="Bennet Bo Peter Telinski" loading="lazy">
-                    <h3>Bennet Bo Peter Telinski</h3>
+                    <img src="BenetTilinski.jpeg" alt="Benet Tilinski" loading="lazy">
+                    <h3>Benet Tilinski</h3>
                     <p class="team-role">CEO &amp; Co-CEO</p>
                 </div>
 
@@ -710,9 +919,17 @@
             </div>
         </section>
 
-    </main>
+        <!-- FOOTER ────────────────────────────────────────── -->
+        <footer>
+            <img src="Logo.png" alt="Flow State" class="footer-logo">
+            <p class="footer-name">Flow State</p>
+            <p>Professionelle Weblösungen &amp; AI-Systeme für Ihr Unternehmen.</p>
+            <p style="margin-top: 6px;">&copy; 2026 Flow State. Alle Rechte vorbehalten.</p>
+        </footer>
 
-    <!-- CONTACT MODAL -->
+    </div><!-- /content-sections -->
+
+    <!-- ═══ CONTACT MODAL ════════════════════════════════════ -->
     <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-box">
             <button class="modal-close" id="closeModal" aria-label="Modal schließen">&times;</button>
@@ -736,52 +953,217 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer>
-        <img src="Logo.png" alt="Flow State" class="footer-logo">
-        <p class="footer-name">Flow State</p>
-        <p>Professionelle Weblösungen &amp; AI-Systeme für Ihr Unternehmen.</p>
-        <p style="margin-top: 6px;">&copy; 2026 Flow State. Alle Rechte vorbehalten.</p>
-    </footer>
-
+    <!-- ═══ SCRIPTS ══════════════════════════════════════════ -->
     <script>
-        // ── Modal ───────────────────────────────────────────────
-        const modal = document.getElementById('modal');
+    // ── 1. LENIS: Buttery Smooth Scroll ──────────────────────
+    const lenis = new Lenis({
+        duration: 1.5,
+        easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+    });
 
-        function openModal() {
-            modal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => document.getElementById('c-name').focus(), 50);
-        }
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(time => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
 
-        function closeModal() {
-            modal.classList.remove('open');
-            document.body.style.overflow = '';
-        }
+    // ── 2. Header: show glass on scroll ──────────────────────
+    const siteHeader = document.getElementById('site-header');
+    lenis.on('scroll', ({ scroll }) => {
+        siteHeader.classList.toggle('scrolled', scroll > 40);
+    });
 
-        document.getElementById('contactButton').addEventListener('click', openModal);
-        document.getElementById('heroContactBtn').addEventListener('click', openModal);
-        document.getElementById('closeModal').addEventListener('click', closeModal);
-
-        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+    // ── 3. Nav anchor links (smooth via Lenis) ────────────────
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', e => {
+            const href = link.getAttribute('href');
+            if (!href || !href.startsWith('#')) return;
+            const target = document.querySelector(href);
+            if (!target) return;
             e.preventDefault();
-            closeModal();
-            const btn = document.getElementById('contactButton');
-            const prev = btn.textContent.trim();
-            btn.textContent = 'Gesendet ✓';
-            btn.style.background = '#059669';
-            setTimeout(() => { btn.textContent = prev; btn.style.background = ''; }, 3500);
+            lenis.scrollTo(target, { offset: -64, duration: 1.4 });
+        });
+    });
+
+    // ── 4. Modal ──────────────────────────────────────────────
+    const modal = document.getElementById('modal');
+
+    function openModal() {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        lenis.stop();
+        setTimeout(() => document.getElementById('c-name').focus(), 60);
+    }
+
+    function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        lenis.start();
+    }
+
+    document.getElementById('contactButton').addEventListener('click', openModal);
+    document.getElementById('heroContactBtn').addEventListener('click', openModal);
+    document.getElementById('ctaContactBtn').addEventListener('click', openModal);
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        closeModal();
+        const btn = document.getElementById('contactButton');
+        const prev = btn.textContent.trim();
+        btn.textContent = 'Gesendet ✓';
+        btn.style.background = '#059669';
+        setTimeout(() => { btn.textContent = prev; btn.style.background = ''; }, 3500);
+    });
+
+    // ── 5. Canvas Wireframe Sequence ──────────────────────────
+    const canvas = document.getElementById('sequence-canvas');
+    const ctx    = canvas.getContext('2d');
+    const FRAME_COUNT = 360;
+    const frames = [];
+
+    function resizeCanvas() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    async function generateSequence() {
+        const off = document.createElement('canvas');
+        off.width  = 1920;
+        off.height = 1080;
+        const oCtx = off.getContext('2d');
+
+        for (let i = 0; i < FRAME_COUNT; i++) {
+            const p = i / (FRAME_COUNT - 1);
+
+            oCtx.fillStyle = '#080810';
+            oCtx.fillRect(0, 0, off.width, off.height);
+            oCtx.save();
+            oCtx.translate(off.width / 2, off.height / 2);
+
+            const rotation = p * Math.PI * 4;
+            const scale    = 1 + Math.sin(p * Math.PI) * 0.5;
+            oCtx.rotate(rotation);
+            oCtx.scale(scale, scale);
+
+            for (let j = 0; j < 12; j++) {
+                const angle  = (j / 12) * Math.PI * 2 + (p * 2);
+                const rX     = 200 + Math.sin(p * Math.PI * 2) * 100;
+                const rY     = 100 + p * 200;
+                const alpha  = Math.min(1, Math.max(0.1, 1 - p * 0.5));
+
+                oCtx.beginPath();
+                oCtx.ellipse(0, 0, rX, rY, angle, 0, Math.PI * 2);
+                oCtx.strokeStyle = p > 0.5
+                    ? `rgba(6, 182, 212, ${alpha * 0.8})`
+                    : `rgba(124, 58, 237, ${alpha})`;
+                oCtx.lineWidth = 1.5 + p * 2;
+                oCtx.stroke();
+            }
+
+            oCtx.beginPath();
+            oCtx.arc(0, 0, 50 + p * 150, 0, Math.PI * 2);
+            oCtx.fillStyle = `rgba(124, 58, 237, ${0.08 + p * 0.18})`;
+            oCtx.fill();
+            oCtx.restore();
+
+            const img = new Image();
+            img.src = off.toDataURL('image/webp', 0.8);
+            await new Promise(r => { img.onload = r; });
+            frames.push(img);
+
+            if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
+        }
+    }
+
+    // ── 6. Render Loop + GSAP Scrollytelling ─────────────────
+    let playhead = { frame: 0 };
+
+    (function initScrollyTelling() {
+        // Render loop
+        (function loop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const f = frames[Math.round(playhead.frame)];
+            if (f) {
+                const cR = canvas.width / canvas.height;
+                const iR = f.width / f.height;
+                let dW = canvas.width, dH = canvas.height, oX = 0, oY = 0;
+                if (cR > iR) { dH = dW / iR; oY = (canvas.height - dH) / 2; }
+                else         { dW = dH * iR; oX = (canvas.width  - dW) / 2; }
+                ctx.drawImage(f, oX, oY, dW, dH);
+            }
+            requestAnimationFrame(loop);
+        })();
+
+        // Scrub playhead with scroll
+        gsap.to(playhead, {
+            frame: FRAME_COUNT - 1,
+            snap: 'frame',
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '.story-container',
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1.5,
+            }
         });
 
-        // ── Scroll reveal ───────────────────────────────────────
-        const observer = new IntersectionObserver(
-            entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-            { threshold: 0.12 }
+        // Panel 1: already visible, fades out
+        gsap.set('#panel-1', { opacity: 1 });
+        gsap.to('#panel-1', {
+            opacity: 0, y: -80,
+            scrollTrigger: {
+                trigger: '.story-container',
+                start: 'top top', end: '10% top', scrub: true
+            }
+        });
+
+        // Panel 2
+        gsap.fromTo('#panel-2',
+            { opacity: 0, y: 80 },
+            { opacity: 1, y: 0,
+              scrollTrigger: { trigger: '.story-container', start: '15% top', end: '25% top', scrub: true }
+            }
         );
-        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        gsap.to('#panel-2', {
+            opacity: 0, y: -80,
+            scrollTrigger: { trigger: '.story-container', start: '35% top', end: '45% top', scrub: true }
+        });
+
+        // Panel 3
+        gsap.fromTo('#panel-3',
+            { opacity: 0, x: -80 },
+            { opacity: 1, x: 0,
+              scrollTrigger: { trigger: '.story-container', start: '45% top', end: '55% top', scrub: true }
+            }
+        );
+        gsap.to('#panel-3', {
+            opacity: 0, y: -80,
+            scrollTrigger: { trigger: '.story-container', start: '60% top', end: '70% top', scrub: true }
+        });
+
+        // Panel 4
+        gsap.fromTo('#panel-4',
+            { opacity: 0, scale: 0.92, y: 40 },
+            { opacity: 1, scale: 1, y: 0,
+              scrollTrigger: { trigger: '.story-container', start: '75% top', end: '85% top', scrub: true }
+            }
+        );
+    })();
+
+    // Start generating frames (non-blocking)
+    generateSequence();
+
+    // ── 7. Scroll reveal for sections ────────────────────────
+    const revealObserver = new IntersectionObserver(
+        entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+        { threshold: 0.12 }
+    );
+    document.querySelectorAll('.fade-up').forEach(el => revealObserver.observe(el));
     </script>
 
 </body>
