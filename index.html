@@ -45,7 +45,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
+            background-color: transparent;
             color: var(--text-1);
             line-height: 1.6;
             overflow-x: hidden;
@@ -217,14 +217,6 @@
             background: radial-gradient(circle at center, rgba(124, 58, 237, 0.12), transparent 60%);
             z-index: 0;
             pointer-events: none;
-        }
-
-        canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
         }
 
         /* Content overlay layer */
@@ -691,6 +683,15 @@
             .panel-headline { font-size: 2.2rem; }
         }
 
+        /* ─── SHADER BACKGROUND ─────────────────────────────── */
+        #shader-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            display: block;
+        }
+
         /* ─── ACCESSIBILITY ──────────────────────────────────── */
         :focus-visible {
             outline: 2px solid #A78BFA;
@@ -706,6 +707,9 @@
     </style>
 </head>
 <body>
+
+    <!-- ═══ WEBGL SHADER BACKGROUND ════════════════════════════ -->
+    <canvas id="shader-bg" aria-hidden="true"></canvas>
 
     <!-- ═══ FIXED HEADER ══════════════════════════════════════ -->
     <header id="site-header">
@@ -723,10 +727,9 @@
     <!-- ═══ SCROLLYTELLING (400vh) ════════════════════════════ -->
     <div class="story-container">
 
-        <!-- Sticky canvas layer -->
+        <!-- Sticky viewport -->
         <div class="sticky-viewport">
             <div class="glow-overlay" aria-hidden="true"></div>
-            <canvas id="sequence-canvas" aria-hidden="true"></canvas>
         </div>
 
         <!-- Text overlay panels -->
@@ -1010,108 +1013,23 @@
 
     document.getElementById('contactForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        const name  = document.getElementById('c-name').value.trim();
+        const email = document.getElementById('c-email').value.trim();
+        const msg   = document.getElementById('c-msg').value.trim();
+
+        const subject = encodeURIComponent('Kontaktanfrage von ' + name);
+        const body    = encodeURIComponent(
+            'Name: '       + name  + '\r\n' +
+            'E-Mail: '     + email + '\r\n\r\n' +
+            'Nachricht:\r\n' + msg
+        );
+
+        window.location.href = 'mailto:flow-state@gmx.de?subject=' + subject + '&body=' + body;
         closeModal();
-        const btn = document.getElementById('contactButton');
-        const prev = btn.textContent.trim();
-        btn.textContent = 'Gesendet ✓';
-        btn.style.background = '#059669';
-        setTimeout(() => { btn.textContent = prev; btn.style.background = ''; }, 3500);
     });
 
-    // ── 5. Canvas Wireframe Sequence ──────────────────────────
-    const canvas = document.getElementById('sequence-canvas');
-    const ctx    = canvas.getContext('2d');
-    const FRAME_COUNT = 360;
-    const frames = [];
-
-    function resizeCanvas() {
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    async function generateSequence() {
-        const off = document.createElement('canvas');
-        off.width  = 1920;
-        off.height = 1080;
-        const oCtx = off.getContext('2d');
-
-        for (let i = 0; i < FRAME_COUNT; i++) {
-            const p = i / (FRAME_COUNT - 1);
-
-            oCtx.fillStyle = '#080810';
-            oCtx.fillRect(0, 0, off.width, off.height);
-            oCtx.save();
-            oCtx.translate(off.width / 2, off.height / 2);
-
-            const rotation = p * Math.PI * 4;
-            const scale    = 1 + Math.sin(p * Math.PI) * 0.5;
-            oCtx.rotate(rotation);
-            oCtx.scale(scale, scale);
-
-            for (let j = 0; j < 12; j++) {
-                const angle  = (j / 12) * Math.PI * 2 + (p * 2);
-                const rX     = 200 + Math.sin(p * Math.PI * 2) * 100;
-                const rY     = 100 + p * 200;
-                const alpha  = Math.min(1, Math.max(0.1, 1 - p * 0.5));
-
-                oCtx.beginPath();
-                oCtx.ellipse(0, 0, rX, rY, angle, 0, Math.PI * 2);
-                oCtx.strokeStyle = p > 0.5
-                    ? `rgba(6, 182, 212, ${alpha * 0.8})`
-                    : `rgba(124, 58, 237, ${alpha})`;
-                oCtx.lineWidth = 1.5 + p * 2;
-                oCtx.stroke();
-            }
-
-            oCtx.beginPath();
-            oCtx.arc(0, 0, 50 + p * 150, 0, Math.PI * 2);
-            oCtx.fillStyle = `rgba(124, 58, 237, ${0.08 + p * 0.18})`;
-            oCtx.fill();
-            oCtx.restore();
-
-            const img = new Image();
-            img.src = off.toDataURL('image/webp', 0.8);
-            await new Promise(r => { img.onload = r; });
-            frames.push(img);
-
-            if (i % 5 === 0) await new Promise(r => setTimeout(r, 0));
-        }
-    }
-
-    // ── 6. Render Loop + GSAP Scrollytelling ─────────────────
-    let playhead = { frame: 0 };
-
+    // ── 5. GSAP Scrollytelling Panels ────────────────────────
     (function initScrollyTelling() {
-        // Render loop
-        (function loop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const f = frames[Math.round(playhead.frame)];
-            if (f) {
-                const cR = canvas.width / canvas.height;
-                const iR = f.width / f.height;
-                let dW = canvas.width, dH = canvas.height, oX = 0, oY = 0;
-                if (cR > iR) { dH = dW / iR; oY = (canvas.height - dH) / 2; }
-                else         { dW = dH * iR; oX = (canvas.width  - dW) / 2; }
-                ctx.drawImage(f, oX, oY, dW, dH);
-            }
-            requestAnimationFrame(loop);
-        })();
-
-        // Scrub playhead with scroll
-        gsap.to(playhead, {
-            frame: FRAME_COUNT - 1,
-            snap: 'frame',
-            ease: 'none',
-            scrollTrigger: {
-                trigger: '.story-container',
-                start: 'top top',
-                end: 'bottom bottom',
-                scrub: 1.5,
-            }
-        });
-
         // Panel 1: already visible, fades out
         gsap.set('#panel-1', { opacity: 1 });
         gsap.to('#panel-1', {
@@ -1155,8 +1073,157 @@
         );
     })();
 
-    // Start generating frames (non-blocking)
-    generateSequence();
+    // ── 6. WebGL Plasma Shader Background ────────────────────
+    (function initShaderBg() {
+        const shaderCanvas = document.getElementById('shader-bg');
+        const gl = shaderCanvas.getContext('webgl');
+        if (!gl) {
+            // Fallback: show solid dark bg if WebGL not supported
+            shaderCanvas.style.background = 'linear-gradient(135deg, #0d0d20 0%, #1a0a2e 100%)';
+            return;
+        }
+
+        const vsSource = `
+            attribute vec4 aVertexPosition;
+            void main() {
+                gl_Position = aVertexPosition;
+            }
+        `;
+
+        const fsSource = `
+            precision highp float;
+            uniform vec2 iResolution;
+            uniform float iTime;
+            const float overallSpeed = 0.2;
+            const float gridSmoothWidth = 0.015;
+            const float axisWidth = 0.05;
+            const float majorLineWidth = 0.025;
+            const float minorLineWidth = 0.0125;
+            const float majorLineFrequency = 5.0;
+            const float minorLineFrequency = 1.0;
+            const float scale = 5.0;
+            const vec4 lineColor = vec4(0.4, 0.2, 0.8, 1.0);
+            const float minLineWidth = 0.01;
+            const float maxLineWidth = 0.2;
+            const float lineSpeed = 1.0 * overallSpeed;
+            const float lineAmplitude = 1.0;
+            const float lineFrequency = 0.2;
+            const float warpSpeed = 0.2 * overallSpeed;
+            const float warpFrequency = 0.5;
+            const float warpAmplitude = 1.0;
+            const float offsetFrequency = 0.5;
+            const float offsetSpeed = 1.33 * overallSpeed;
+            const float minOffsetSpread = 0.6;
+            const float maxOffsetSpread = 2.0;
+            const int linesPerGroup = 16;
+            #define drawCircle(pos, radius, coord) smoothstep(radius + gridSmoothWidth, radius, length(coord - (pos)))
+            #define drawSmoothLine(pos, halfWidth, t) smoothstep(halfWidth, 0.0, abs(pos - (t)))
+            #define drawCrispLine(pos, halfWidth, t) smoothstep(halfWidth + gridSmoothWidth, halfWidth, abs(pos - (t)))
+            #define drawPeriodicLine(freq, width, t) drawCrispLine(freq / 2.0, width, abs(mod(t, freq) - (freq) / 2.0))
+            float drawCrispLineF(float pos, float halfWidth, float t) {
+                return smoothstep(halfWidth + gridSmoothWidth, halfWidth, abs(pos - t));
+            }
+            float random(float t) {
+                return (cos(t) + cos(t * 1.3 + 1.3) + cos(t * 1.4 + 1.4)) / 3.0;
+            }
+            float getPlasmaY(float x, float horizontalFade, float offset) {
+                return random(x * lineFrequency + iTime * lineSpeed) * horizontalFade * lineAmplitude + offset;
+            }
+            void main() {
+                vec2 fragCoord = gl_FragCoord.xy;
+                vec2 uv = fragCoord.xy / iResolution.xy;
+                vec2 space = (fragCoord - iResolution.xy / 2.0) / iResolution.x * 2.0 * scale;
+                float horizontalFade = 1.0 - (cos(uv.x * 6.28) * 0.5 + 0.5);
+                float verticalFade   = 1.0 - (cos(uv.y * 6.28) * 0.5 + 0.5);
+                space.y += random(space.x * warpFrequency + iTime * warpSpeed) * warpAmplitude * (0.5 + horizontalFade);
+                space.x += random(space.y * warpFrequency + iTime * warpSpeed + 2.0) * warpAmplitude * horizontalFade;
+                vec4 lines = vec4(0.0);
+                vec4 bgColor1 = vec4(0.05, 0.05, 0.18, 1.0);
+                vec4 bgColor2 = vec4(0.15, 0.05, 0.28, 1.0);
+                for (int l = 0; l < 16; l++) {
+                    float normalizedLineIndex = float(l) / 16.0;
+                    float offsetTime     = iTime * offsetSpeed;
+                    float offsetPosition = float(l) + space.x * offsetFrequency;
+                    float rand     = random(offsetPosition + offsetTime) * 0.5 + 0.5;
+                    float halfWidth = mix(minLineWidth, maxLineWidth, rand * horizontalFade) / 2.0;
+                    float offset   = random(offsetPosition + offsetTime * (1.0 + normalizedLineIndex))
+                                     * mix(minOffsetSpread, maxOffsetSpread, horizontalFade);
+                    float linePos  = getPlasmaY(space.x, horizontalFade, offset);
+                    float line     = drawSmoothLine(linePos, halfWidth, space.y) / 2.0
+                                   + drawCrispLineF(linePos, halfWidth * 0.15, space.y);
+                    float circleX  = mod(float(l) + iTime * lineSpeed, 25.0) - 12.0;
+                    vec2  circlePos = vec2(circleX, getPlasmaY(circleX, horizontalFade, offset));
+                    float circle   = drawCircle(circlePos, 0.01, space) * 4.0;
+                    line = line + circle;
+                    lines += line * lineColor * rand;
+                }
+                vec4 fragColor = mix(bgColor1, bgColor2, uv.x);
+                fragColor *= verticalFade;
+                fragColor.a = 1.0;
+                fragColor += lines;
+                gl_FragColor = fragColor;
+            }
+        `;
+
+        function loadShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.warn('Shader compile error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        }
+
+        const vShader = loadShader(gl, gl.VERTEX_SHADER,   vsSource);
+        const fShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        if (!vShader || !fShader) return;
+
+        const prog = gl.createProgram();
+        gl.attachShader(prog, vShader);
+        gl.attachShader(prog, fShader);
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+            console.warn('Shader link error:', gl.getProgramInfoLog(prog));
+            return;
+        }
+
+        const posBuf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+        gl.bufferData(gl.ARRAY_BUFFER,
+            new Float32Array([-1,-1, 1,-1, -1,1, 1,1]),
+            gl.STATIC_DRAW);
+
+        const attrib  = gl.getAttribLocation(prog, 'aVertexPosition');
+        const uRes    = gl.getUniformLocation(prog, 'iResolution');
+        const uTime   = gl.getUniformLocation(prog, 'iTime');
+
+        function resizeShader() {
+            shaderCanvas.width  = window.innerWidth;
+            shaderCanvas.height = window.innerHeight;
+            gl.viewport(0, 0, shaderCanvas.width, shaderCanvas.height);
+        }
+        window.addEventListener('resize', resizeShader);
+        resizeShader();
+
+        const t0 = Date.now();
+        function renderShader() {
+            const t = (Date.now() - t0) / 1000;
+            gl.clearColor(0, 0, 0, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.useProgram(prog);
+            gl.uniform2f(uRes, shaderCanvas.width, shaderCanvas.height);
+            gl.uniform1f(uTime, t);
+            gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+            gl.vertexAttribPointer(attrib, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(attrib);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+            requestAnimationFrame(renderShader);
+        }
+        renderShader();
+    })();
 
     // ── 7. Scroll reveal for sections ────────────────────────
     const revealObserver = new IntersectionObserver(
