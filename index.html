@@ -190,7 +190,7 @@
         /* ─── SCROLLYTELLING: STORY CONTAINER ────────────────── */
         .story-container {
             position: relative;
-            height: 400vh;
+            height: 300vh;
             width: 100%;
         }
 
@@ -219,7 +219,7 @@
             pointer-events: none;
         }
 
-        /* Content overlay layer */
+        /* Content overlay layer – innerhalb des sticky viewport */
         .content-layer {
             position: absolute;
             inset: 0;
@@ -571,8 +571,24 @@
         .modal-sub {
             font-size: 0.85rem;
             color: var(--text-2);
-            margin-bottom: 28px;
+            margin-bottom: 16px;
         }
+
+        .modal-email-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(124, 58, 237, 0.08);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: var(--r-sm);
+            font-size: 0.82rem;
+            color: #C4B5FD;
+            margin-bottom: 20px;
+            letter-spacing: 0.01em;
+        }
+
+        .modal-email-hint svg { flex-shrink: 0; opacity: 0.8; }
 
         .field { margin-bottom: 16px; }
 
@@ -727,94 +743,93 @@
     <!-- ═══ SCROLLYTELLING (400vh) ════════════════════════════ -->
     <div class="story-container">
 
-        <!-- Sticky viewport -->
+        <!-- Sticky viewport – enthält Glow + alle Panels (alle am selben Ort, GSAP steuert Sichtbarkeit) -->
         <div class="sticky-viewport">
             <div class="glow-overlay" aria-hidden="true"></div>
-        </div>
 
-        <!-- Text overlay panels -->
-        <div class="content-layer" aria-hidden="true">
+            <div class="content-layer">
 
-            <!-- Panel 1: Hero ──────── top: 0 -->
-            <div class="panel" id="panel-1"
-                 style="top: 0; justify-content: center; text-align: center; flex-direction: column; align-items: center;"
-                 aria-hidden="false">
-                <div class="hero-badge">
-                    <span class="badge-dot"></span>
-                    Webseiten &amp; AI-Lösungen
-                </div>
-                <h1 class="panel-headline">
-                    Boost Your<br>
-                    <span class="gradient-text">Company Image</span>
-                </h1>
-                <p class="panel-sub" style="text-align:center; margin: 0 auto;">
-                    Flow State entwickelt moderne Webseiten und intelligente AI-Berater,
-                    die das Image und die Kommunikation Ihres Unternehmens transformieren.
-                </p>
-                <div class="hero-ctas interactive" style="pointer-events:auto;">
-                    <button class="btn-primary" id="heroContactBtn" aria-haspopup="dialog">
-                        Projekt anfragen
-                    </button>
-                    <a href="#services" class="btn-ghost nav-link">Leistungen ansehen</a>
-                </div>
-                <div class="trust-strip">
-                    <div class="trust-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                        Kostenlose Erstberatung
+                <!-- Panel 1: Hero -->
+                <div class="panel" id="panel-1"
+                     style="top:0; justify-content:center; text-align:center; flex-direction:column; align-items:center;"
+                     aria-hidden="false">
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        Webseiten &amp; AI-Lösungen
                     </div>
-                    <div class="trust-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                        Vertraulich &amp; sicher
+                    <h1 class="panel-headline">
+                        Boost Your<br>
+                        <span class="gradient-text">Company Image</span>
+                    </h1>
+                    <p class="panel-sub" style="text-align:center; margin:0 auto;">
+                        Flow State entwickelt moderne Webseiten und intelligente AI-Berater,
+                        die das Image und die Kommunikation Ihres Unternehmens transformieren.
+                    </p>
+                    <div class="hero-ctas interactive" style="pointer-events:auto;">
+                        <button class="btn-primary" id="heroContactBtn" aria-haspopup="dialog">
+                            Projekt anfragen
+                        </button>
+                        <a href="#services" class="btn-ghost nav-link">Leistungen ansehen</a>
                     </div>
-                    <div class="trust-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                        Schnelle Lieferung
+                    <div class="trust-strip">
+                        <div class="trust-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            Kostenlose Erstberatung
+                        </div>
+                        <div class="trust-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            Vertraulich &amp; sicher
+                        </div>
+                        <div class="trust-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                            Schnelle Lieferung
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Panel 2: Engineering Reveal ── top: 120vh -->
-            <div class="panel" id="panel-2" style="top: 120vh; justify-content: flex-start;">
-                <div>
-                    <h2 class="panel-headline">Engineering<br>Reveal.</h2>
-                    <p class="panel-sub">
-                        Pixelperfektion trifft auf kompromisslose Performance.
-                        Jede Zeile Code ist orchestriert für maximale Wirkung.
-                        Die innere Struktur Ihrer Marke wird sichtbar.
-                    </p>
+                <!-- Panel 2: Engineering Reveal -->
+                <div class="panel" id="panel-2" style="top:0; justify-content:flex-start;">
+                    <div>
+                        <h2 class="panel-headline">Engineering<br>Reveal.</h2>
+                        <p class="panel-sub">
+                            Pixelperfektion trifft auf kompromisslose Performance.
+                            Jede Zeile Code ist orchestriert für maximale Wirkung.
+                            Die innere Struktur Ihrer Marke wird sichtbar.
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Panel 3: Skalierbare Plattform ── top: 220vh -->
-            <div class="panel" id="panel-3" style="top: 220vh; justify-content: flex-end; text-align: right;">
-                <div>
-                    <h2 class="panel-headline" style="color:#C4B5FD;">Skalierbare<br>Plattform.</h2>
-                    <p class="panel-sub" style="margin-left: auto;">
-                        Design, SEO, Speed. Eine nahtlose Architektur,
-                        bereit den Markt zu dominieren und Vertrauen aufzubauen.
-                    </p>
+                <!-- Panel 3: Skalierbare Plattform -->
+                <div class="panel" id="panel-3" style="top:0; justify-content:flex-end; text-align:right;">
+                    <div>
+                        <h2 class="panel-headline" style="color:#C4B5FD;">Skalierbare<br>Plattform.</h2>
+                        <p class="panel-sub" style="margin-left:auto;">
+                            Design, SEO, Speed. Eine nahtlose Architektur,
+                            bereit den Markt zu dominieren und Vertrauen aufzubauen.
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Panel 4: CTA ── top: 320vh -->
-            <div class="panel interactive" id="panel-4"
-                 style="top: 320vh; justify-content: center; text-align: center; flex-direction: column; align-items: center;"
-                 aria-hidden="false">
-                <div class="cta-card">
-                    <h2>Bereit für den<br><span class="gradient-text">Flow State?</span></h2>
-                    <p>
-                        Lass uns gemeinsam deine Vision und digitale Identität
-                        auf das nächste Level heben.
-                    </p>
-                    <button class="btn-gradient" id="ctaContactBtn"
-                            style="width:100%; padding:16px 24px; font-size:1rem;"
-                            aria-haspopup="dialog">
-                        Projekt jetzt anfragen
-                    </button>
-                    <p class="cta-fine">Absolut vertraulich. Erstgespräch kostenlos.</p>
+                <!-- Panel 4: CTA -->
+                <div class="panel interactive" id="panel-4"
+                     style="top:0; justify-content:center; text-align:center; flex-direction:column; align-items:center;"
+                     aria-hidden="false">
+                    <div class="cta-card">
+                        <h2>Bereit für den<br><span class="gradient-text">Flow State?</span></h2>
+                        <p>
+                            Lass uns gemeinsam deine Vision und digitale Identität
+                            auf das nächste Level heben.
+                        </p>
+                        <button class="btn-gradient" id="ctaContactBtn"
+                                style="width:100%; padding:16px 24px; font-size:1rem;"
+                                aria-haspopup="dialog">
+                            Projekt jetzt anfragen
+                        </button>
+                        <p class="cta-fine">Absolut vertraulich. Erstgespräch kostenlos.</p>
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 
@@ -938,6 +953,10 @@
             <button class="modal-close" id="closeModal" aria-label="Modal schließen">&times;</button>
             <h3 id="modal-title">Kontakt aufnehmen</h3>
             <p class="modal-sub">Erstgespräch kostenlos und unverbindlich.</p>
+            <div class="modal-email-hint">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                flow-state@gmx.de
+            </div>
             <form id="contactForm" novalidate>
                 <div class="field">
                     <label for="c-name">Name <span aria-hidden="true">*</span></label>
@@ -1030,45 +1049,45 @@
 
     // ── 5. GSAP Scrollytelling Panels ────────────────────────
     (function initScrollyTelling() {
-        // Panel 1: already visible, fades out
+        // Panel 1: sofort sichtbar — bleibt lang stehen — dann langsam weg
         gsap.set('#panel-1', { opacity: 1 });
         gsap.to('#panel-1', {
-            opacity: 0, y: -80,
+            opacity: 0, y: -30,
             scrollTrigger: {
                 trigger: '.story-container',
-                start: 'top top', end: '10% top', scrub: true
+                start: '12% top', end: '20% top', scrub: 2
             }
         });
 
-        // Panel 2
+        // Panel 2: einblenden → sichtbar → ausblenden
         gsap.fromTo('#panel-2',
-            { opacity: 0, y: 80 },
+            { opacity: 0, y: 30 },
             { opacity: 1, y: 0,
-              scrollTrigger: { trigger: '.story-container', start: '15% top', end: '25% top', scrub: true }
+              scrollTrigger: { trigger: '.story-container', start: '20% top', end: '28% top', scrub: 2 }
             }
         );
         gsap.to('#panel-2', {
-            opacity: 0, y: -80,
-            scrollTrigger: { trigger: '.story-container', start: '35% top', end: '45% top', scrub: true }
+            opacity: 0, y: -30,
+            scrollTrigger: { trigger: '.story-container', start: '45% top', end: '53% top', scrub: 2 }
         });
 
-        // Panel 3
+        // Panel 3: einblenden → sichtbar → ausblenden
         gsap.fromTo('#panel-3',
-            { opacity: 0, x: -80 },
+            { opacity: 0, x: -40 },
             { opacity: 1, x: 0,
-              scrollTrigger: { trigger: '.story-container', start: '45% top', end: '55% top', scrub: true }
+              scrollTrigger: { trigger: '.story-container', start: '53% top', end: '61% top', scrub: 2 }
             }
         );
         gsap.to('#panel-3', {
-            opacity: 0, y: -80,
-            scrollTrigger: { trigger: '.story-container', start: '60% top', end: '70% top', scrub: true }
+            opacity: 0, y: -30,
+            scrollTrigger: { trigger: '.story-container', start: '78% top', end: '86% top', scrub: 2 }
         });
 
-        // Panel 4
+        // Panel 4: CTA – einblenden und sichtbar bleiben
         gsap.fromTo('#panel-4',
-            { opacity: 0, scale: 0.92, y: 40 },
+            { opacity: 0, scale: 0.95, y: 24 },
             { opacity: 1, scale: 1, y: 0,
-              scrollTrigger: { trigger: '.story-container', start: '75% top', end: '85% top', scrub: true }
+              scrollTrigger: { trigger: '.story-container', start: '86% top', end: '94% top', scrub: 2 }
             }
         );
     })();
