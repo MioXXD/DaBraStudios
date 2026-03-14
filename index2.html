@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flow State | Premium Scrollytelling Experience</title>
     <meta name="description" content="Wir bei Flow State konzipieren und entwickeln souveräne, performante Premium-Webseiten, die deine Marke weltweit repräsentieren. Apple-Level Design trifft auf perfektes Engineering.">
-    <meta name="theme-color" content="#050505">
+    <meta name="theme-color" content="#080810">
 
-    <!-- Fonts -->
+    <!-- Fonts: Poppins (headings) + Inter (body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,13 +19,14 @@
             theme: {
                 extend: {
                     colors: {
-                        background: "#050505",
-                        surface: "#0A0A0C",
-                        primary: "#0050FF",
-                        secondary: "#00D6FF",
+                        background: "#080810",
+                        surface: "#0f0f1a",
+                        primary: "#7C3AED",
+                        secondary: "#06B6D4",
                     },
                     fontFamily: {
                         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
                     },
                     letterSpacing: {
                         tightest: '-0.04em',
@@ -44,8 +45,8 @@
         body, html {
             margin: 0;
             padding: 0;
-            background-color: #050505;
-            color: #ffffff;
+            background-color: #080810;
+            color: #F1F5F9;
             overflow-x: hidden;
             scroll-behavior: auto !important; /* Managed by Lenis */
         }
@@ -93,7 +94,7 @@
             transform: translate(-50%, -50%);
             width: 80vw;
             height: 80vh;
-            background: radial-gradient(circle at center, rgba(0, 80, 255, 0.15), transparent 60%);
+            background: radial-gradient(circle at center, rgba(124, 58, 237, 0.12), transparent 60%);
             z-index: 0;
             pointer-events: none;
         }
@@ -116,11 +117,12 @@
         /* The Animated Gradient Button */
         .btn-gradient {
             position: relative;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.28);
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
             overflow: hidden;
+            color: #C4B5FD;
         }
 
             .btn-gradient::before {
@@ -130,7 +132,7 @@
                 left: -2px;
                 right: -2px;
                 bottom: -2px;
-                background: conic-gradient(from 0deg, transparent, #0050FF, #00D6FF, transparent 30%);
+                background: conic-gradient(from 0deg, transparent, #7C3AED, #06B6D4, transparent 30%);
                 animation: rotate-border 4s linear infinite;
                 z-index: -1;
                 opacity: 0;
@@ -143,7 +145,8 @@
 
             .btn-gradient:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 10px 30px -10px rgba(0, 80, 255, 0.5);
+                box-shadow: 0 10px 30px -10px rgba(124, 58, 237, 0.5);
+                color: #fff;
             }
 
         @keyframes rotate-border {
@@ -169,7 +172,7 @@
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: #050505;
+            background: #080810;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -206,7 +209,7 @@
             <!-- 0–15%: Hero -->
             <div class="panel justify-center text-center" id="panel-1" style="top: 5vh;">
                 <div class="max-w-4xl">
-                    <h1 class="text-6xl md:text-8xl font-bold tracking-tightest mb-6">Deine Website.<br>Dein Image.</h1>
+                    <h1 class="text-6xl md:text-8xl font-bold tracking-tightest mb-6" style="font-family:'Poppins',sans-serif;">Deine Website.<br><span style="background:linear-gradient(130deg,#fff 0%,#C4B5FD 45%,#67E8F9 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Dein Image.</span></h1>
                     <p class="text-xl md:text-2xl text-[rgba(255,255,255,0.6)] font-light max-w-2xl mx-auto">
                         Wir designen und bauen digitale Erlebnisse, die deine Marke souverän repräsentieren.
                     </p>
@@ -226,7 +229,7 @@
             <!-- 40–70%: Product to Platform -->
             <div class="panel justify-end text-right" id="panel-3" style="top: 220vh;">
                 <div class="max-w-xl">
-                    <h2 class="text-4xl md:text-5xl font-semibold tracking-tight mb-4 text-secondary">Skalierbare Plattform.</h2>
+                    <h2 class="text-4xl md:text-5xl font-semibold tracking-tight mb-4" style="font-family:'Poppins',sans-serif;color:#C4B5FD;">Skalierbare Plattform.</h2>
                     <p class="text-lg text-[rgba(255,255,255,0.6)] leading-relaxed">
                         Design, SEO, Speed. Eine nahtlose Architektur, bereit, den Markt zu dominieren und Vertrauen aufzubauen.
                     </p>
@@ -248,7 +251,7 @@
     </div>
 
     <!-- Nachlaufender Footer -->
-    <footer class="h-screen bg-[#020202] flex items-center justify-center border-t border-[rgba(255,255,255,0.05)] relative z-20">
+    <footer class="h-screen bg-[#080810] flex items-center justify-content-center border-t border-[rgba(255,255,255,0.07)] relative z-20" style="display:flex;align-items:center;justify-content:center;">
         <div class="text-center">
             <div class="text-3xl font-bold mb-4 opacity-50">Flow State &copy; 2026</div>
             <p class="text-[rgba(255,255,255,0.3)] text-sm">Made with Precision. Scrollytelling Demo.</p>
@@ -320,7 +323,7 @@
                 const progress = i / (FRAME_COUNT - 1); // 0.0 to 1.0
 
                 // Clear state
-                oCtx.fillStyle = '#050505'; // Exact dark background as requested
+                oCtx.fillStyle = '#080810'; // Clean dark background
                 oCtx.fillRect(0, 0, renderWidth, renderHeight);
 
                 oCtx.save();
@@ -355,9 +358,9 @@
                     // Dynamic coloring: Deep blue to Electric Cyan
                     const strokeOpacity = Math.min(1, Math.max(0.1, 1 - progress * 0.5));
                     if (progress > 0.5) {
-                        oCtx.strokeStyle = `rgba(0, 214, 255, ${strokeOpacity * 0.8})`; // Cyan
+                        oCtx.strokeStyle = `rgba(6, 182, 212, ${strokeOpacity * 0.8})`; // Cyan
                     } else {
-                        oCtx.strokeStyle = `rgba(0, 80, 255, ${strokeOpacity})`; // Deep Blue
+                        oCtx.strokeStyle = `rgba(124, 58, 237, ${strokeOpacity})`; // Purple
                     }
 
                     oCtx.lineWidth = 1.5 + (progress * 2);
@@ -367,7 +370,7 @@
                 // Inner core
                 oCtx.beginPath();
                 oCtx.arc(0, 0, 50 + (progress * 150), 0, Math.PI * 2);
-                oCtx.fillStyle = `rgba(0, 80, 255, ${0.1 + progress * 0.2})`;
+                oCtx.fillStyle = `rgba(124, 58, 237, ${0.08 + progress * 0.18})`;
                 oCtx.fill();
                 oCtx.strokeStyle = "#ffffff";
                 oCtx.lineWidth = 1;
@@ -396,22 +399,7 @@
             generateSequence();
         }
 
-        // Dynamischer Hintergrund: Partikel fliegen immer (unabhängig vom Scroll)
-        // Globaler Zeit-Taktgeber für fortlaufende Animation
-        let timeGlobal = 0;
-
-        function renderParticles(ctx, width, height) {
-            ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-            timeGlobal += 0.01; // Geschwindigkeit der Partikel
-            for (let p = 0; p < 50; p++) {
-                // timeGlobal anstelle von festem Frame-Progress nutzen
-                const px = (Math.sin(p * 100 + timeGlobal) * width / 2) + width / 2;
-                const py = (Math.cos(p * 50 - timeGlobal * 0.5) * height / 2) + height / 2;
-                ctx.beginPath();
-                ctx.arc(px, py, 1.5, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
+        // Particle dots removed — clean background
 
         // --------- GSAP STORY ANIMATIONS & CANVAS RENDER LOOP ---------
         let playhead;
@@ -446,8 +434,7 @@
                     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
                 }
 
-                // 2. Partikel immer oben drüber (oder drunter) zeichnen
-                renderParticles(ctx, canvas.width, canvas.height);
+                // No dot particles — clean canvas
 
                 requestAnimationFrame(renderLoop);
             };
